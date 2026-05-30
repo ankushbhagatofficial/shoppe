@@ -20,7 +20,6 @@ const userSchema = new Schema({
 
   password: {
     type: String,
-    required: [true, "required:email"],
     minlength: [8, "minlength:8"],
     maxlength: [60, "maxlength:60"]
   },
