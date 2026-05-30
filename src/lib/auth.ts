@@ -22,7 +22,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           id: user.id,
           name: user.name,
           email: user.email,
-          status: user.status,
           role: user.role
         }
       },
@@ -32,20 +31,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
   callbacks: {
     signIn: async ({ user, account }) => {
-      await connectDB()
 
       if (account?.provider === "google") {
-        await User.findOneAndUpdate({ email: user.email },
-          {
+        await connectDB()
+        let googleUser = await User.findOne({ email: user.email })
+        if (!googleUser)
+          googleUser = await User.create({
             name: user.name,
             email: user.email,
             avatar: user.image,
-          },
-          {
-            upsert: true,
-            new: true
-          }
-        )
+            verified: true,
+          })
+        user.id = googleUser._id.toString()
+        user.role = googleUser.role
       }
       return true
     },

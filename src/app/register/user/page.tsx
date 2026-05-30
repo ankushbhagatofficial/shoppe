@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation"
 import { ChangeEvent, useState } from "react"
 import Image from "next/image";
 import axios from "axios"
+import { signIn } from "next-auth/react"
 
 type FieldErrors = {
   name?: string,
@@ -97,7 +98,7 @@ export default function page() {
             <button className="flex justify-center item-center p-2 h-10 mt-2 bg-blue-800 select-none font-semibold rounded-full cursor-pointer border-2 border-transparent hover:bg-blue-800 hover:border-white active:bg-blue-800 active:border-white transition-all duration-200" type="submit">
               {loading ? <Icon className="" fontSize={25} icon="line-md:loading-loop" /> : "Register"}
             </button>
-            <button className="relative p-2 mt-2 w-full text-white bg-neutral-900 select-none font-semibold rounded-full cursor-pointer border-2 border-transparent hover:border-white active:border-white transition-all duration-200" type="button">
+            <button onClick={() => signIn("google", {callbackUrl: "/"})} className="relative p-2 mt-2 w-full text-white bg-neutral-900 select-none font-semibold rounded-full cursor-pointer border-2 border-transparent hover:border-white active:border-white transition-all duration-200" type="button">
               <Image className="absolute saturate-150 left-2 top-1/2 -translate-y-1/2" src="/google.png" alt="google" width={25} height={25} />
               Continue with Google
             </button>

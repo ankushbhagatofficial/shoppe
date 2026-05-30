@@ -37,7 +37,6 @@ export async function loginAction(formData: { email: string, password: string, }
     id: user._id.toString(),
     name: user.name,
     email: user.email,
-    status: user.status,
     role: user.role
   }
 
