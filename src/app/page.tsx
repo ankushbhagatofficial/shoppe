@@ -1,18 +1,12 @@
-"use client"
-
-import { useEffect } from "react";
+import { auth } from "@/lib/auth";
 import Navbar from "./components/Navbar";
-import { useSession } from "next-auth/react";
 
-export default function Home() {
-  const session  = useSession()
-  useEffect(() => {
-    console.log(session.data?.user);
-  }, [session])
+export default async function Home() {
+  const session = await auth()
 
   return (
     <>
-      <Navbar />
+      <Navbar session={session} cart={0} />
     </>
   );
 }

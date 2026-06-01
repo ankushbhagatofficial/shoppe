@@ -4,10 +4,10 @@ import { Icon } from "@iconify/react"
 import { motion } from "motion/react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { ChangeEvent, useState } from "react"
+import { ChangeEvent, useEffect, useState } from "react"
 import Image from "next/image";
+import { Google } from "@/actions/OAuth"
 import axios from "axios"
-import { signIn } from "next-auth/react"
 
 type FieldErrors = {
   name?: string,
@@ -18,10 +18,22 @@ type FieldErrors = {
 
 export default function page() {
   const router = useRouter()
-  const [loading, setLoading] = useState(false)
+  const [loadingA, setLoadingA] = useState(false)
+  const [loadingB, setLoadingB] = useState(false)
   const [formData, setFormData] = useState({})
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [showPassword, setShowPassword] = useState(false)
+
+  useEffect(() => {
+    const handler = (e: MessageEvent) => {
+      if (e.origin === window.location.origin && e.data === "oatuh.success") {
+        router.refresh()
+      }
+      setLoadingB(false)
+    }
+    window.addEventListener("message", handler)
+    return () => window.removeEventListener("message", handler)
+  }, [])
 
   const handleOnChange = (e: ChangeEvent) => {
     const { name, value } = e.target as HTMLInputElement
@@ -36,7 +48,7 @@ export default function page() {
 
   const handleSubmit = async (e: ChangeEvent) => {
     e.preventDefault()
-    setLoading(true)
+    setLoadingA(true)
     setFieldErrors({})
 
     try {
@@ -52,7 +64,7 @@ export default function page() {
         }
       }
     }
-    setLoading(false)
+    setLoadingA(false)
   }
 
   return (
@@ -82,7 +94,7 @@ export default function page() {
               <input onChange={handleOnChange} className="text-sm border-2 border-gray-400 rounded p-2 w-full outline-0 focus:border-white" type={showPassword ? "text" : "password"} name="password" placeholder="Type your password" autoComplete="new-password" required />
               <Icon className="absolute cursor-pointer text-xl top-1/2 right-1 -translate-1/2" onClick={() => setShowPassword(!showPassword)} icon={showPassword ? "mdi:eye-outline" : "mdi:eye-off-outline"} />
             </div>
-            {fieldErrors?.password && <span className="mt-1 text-xs text-red-500">{fieldErrors?.password}</span>}            
+            {fieldErrors?.password && <span className="mt-1 text-xs text-red-500">{fieldErrors?.password}</span>}
           </div>
 
           <div className="flex flex-col">
@@ -91,16 +103,16 @@ export default function page() {
               <input onChange={handleOnChange} className="text-sm border-2 border-gray-400 rounded p-2 w-full outline-0 focus:border-white" type={showPassword ? "text" : "password"} name="cpassword" placeholder="Confirm your password" autoComplete="new-password" required />
               <Icon className="absolute cursor-pointer text-xl top-1/2 right-1 -translate-1/2" onClick={() => setShowPassword(!showPassword)} icon={showPassword ? "mdi:eye-outline" : "mdi:eye-off-outline"} />
             </div>
-            {fieldErrors?.cpassword && <span className="mt-1 text-xs text-red-500">{fieldErrors?.cpassword}</span>}            
+            {fieldErrors?.cpassword && <span className="mt-1 text-xs text-red-500">{fieldErrors?.cpassword}</span>}
           </div>
 
           <div className="flex flex-col gap-y-1">
-            <button className="flex justify-center item-center p-2 h-10 mt-2 bg-blue-800 select-none font-semibold rounded-full cursor-pointer border-2 border-transparent hover:bg-blue-800 hover:border-white active:bg-blue-800 active:border-white transition-all duration-200" type="submit">
-              {loading ? <Icon className="" fontSize={25} icon="line-md:loading-loop" /> : "Register"}
+            <button disabled={!!loadingA || !!loadingB} className="flex justify-center item-center leading-5 disabled:border-transparent disabled:opacity-70 disabled:cursor-default h-10 p-2 mt-2 bg-blue-800 select-none font-semibold rounded-full cursor-pointer border-2 border-transparent hover:bg-blue-800 hover:border-white active:bg-blue-800 active:border-white transition-all duration-200" type="submit">
+              {loadingA ? <Icon className="" fontSize={25} icon="line-md:loading-loop" /> : "Register"}
             </button>
-            <button onClick={() => signIn("google", {callbackUrl: "/"})} className="relative p-2 mt-2 w-full text-white bg-neutral-900 select-none font-semibold rounded-full cursor-pointer border-2 border-transparent hover:border-white active:border-white transition-all duration-200" type="button">
+            <button disabled={!!loadingA || !!loadingB} onClick={() => Google(() => setLoadingB(true))} className="flex justify-center items-center relative disabled:opacity-70 disabled:cursor-default p-2 mt-2 w-full text-white bg-neutral-900 select-none font-semibold rounded-full cursor-pointer border-2 border-transparent hover:border-white active:border-white transition-all duration-200" type="button">
               <Image className="absolute saturate-150 left-2 top-1/2 -translate-y-1/2" src="/google.png" alt="google" width={25} height={25} />
-              Continue with Google
+              {loadingB ? <Icon className="" fontSize={25} icon="line-md:loading-loop" /> : "Continue with Google"}
             </button>
           </div>
           <Link className="text-center text-sm" href={"/login"} >Already have an account? <u className="font-bold">Login</u></Link>

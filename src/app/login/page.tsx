@@ -4,28 +4,40 @@ import { Icon } from "@iconify/react"
 import { motion } from "motion/react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { ChangeEvent, useState } from "react"
+import { ChangeEvent, useEffect, useState } from "react"
 import Image from "next/image";
-import { loginAction } from "@/app/actions/login"
-import { signIn } from "next-auth/react"
+import { loginAction } from "@/actions/login"
+import { Google } from "@/actions/OAuth"
 
 export default function page() {
   const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [loading, setLoading] = useState(false)
+  const [loadingA, setLoadingA] = useState(false)
+  const [loadingB, setLoadingB] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+
+  useEffect(() => {
+    const handler = (e: MessageEvent) => {
+      if (e.origin === window.location.origin && e.data === "oatuh.success") {
+        router.refresh()
+      }
+      setLoadingB(false)
+    }
+    window.addEventListener("message", handler)
+    return () => window.removeEventListener("message", handler)
+  }, [])
 
   const handleSubmit = async (e: ChangeEvent) => {
     e.preventDefault()
-    setLoading(true)
+    setLoadingA(true)
     try {
       await loginAction({ email, password })
     } catch (error) {
       if (error instanceof Error)
-      console.log(error?.message);
+        console.log(error?.message);
     }
-    setLoading(false)
+    setLoadingA(false)
 
   }
 
@@ -53,12 +65,12 @@ export default function page() {
 
           <div className="flex flex-col gap-y-1">
             <Link className="underline text-sm" href={"/forgotpassword"} >Forgot password?</Link>
-            <button className="flex justify-center item-center h-10 p-2 mt-2 bg-blue-800 select-none font-semibold rounded-full cursor-pointer border-2 border-transparent hover:bg-blue-800 hover:border-white active:bg-blue-800 active:border-white transition-all duration-200" type="submit">
-              {loading ? <Icon className="" fontSize={25} icon="line-md:loading-loop" /> : "Login"}
+            <button disabled={!!loadingA || !!loadingB} className="flex justify-center item-center leading-5 disabled:border-transparent disabled:opacity-70 disabled:cursor-default h-10 p-2 mt-2 bg-blue-800 select-none font-semibold rounded-full cursor-pointer border-2 border-transparent hover:bg-blue-800 hover:border-white active:bg-blue-800 active:border-white transition-all duration-200" type="submit">
+              {loadingA ? <Icon className="" fontSize={25} icon="line-md:loading-loop" /> : "Login"}
             </button>
-            <button onClick={() => signIn("google", {callbackUrl: "/"})} className="relative p-2 mt-2 w-full text-white bg-neutral-900 select-none font-semibold rounded-full cursor-pointer border-2 border-transparent hover:border-white active:border-white transition-all duration-200" type="button">
+            <button disabled={!!loadingA || !!loadingB} onClick={() => Google(() => setLoadingB(true))} className="flex justify-center items-center relative disabled:opacity-70 disabled:cursor-default p-2 mt-2 w-full text-white bg-neutral-900 select-none font-semibold rounded-full cursor-pointer border-2 border-transparent hover:border-white active:border-white transition-all duration-200" type="button">
               <Image className="absolute saturate-150 left-2 top-1/2 -translate-y-1/2" src="/google.png" alt="google" width={25} height={25} />
-              Continue with Google
+              {loadingB ? <Icon className="" fontSize={25} icon="line-md:loading-loop" /> : "Continue with Google"}
             </button>
           </div>
           <Link className="text-center text-sm" href={"/register"} >Don't have an account? <u className="font-bold">Register</u></Link>

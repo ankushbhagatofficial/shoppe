@@ -80,7 +80,7 @@ const userSchema = new Schema({
 
 }, { timestamps: true })
 
-type User = InferSchemaType<typeof userSchema>
+export type UserType = InferSchemaType<typeof userSchema>
 
 const User = models?.User || model("User", userSchema)
 

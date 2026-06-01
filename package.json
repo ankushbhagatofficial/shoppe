@@ -8,6 +8,9 @@
     "start": "next start"
   },
   "dependencies": {
+    "@iconify-react/fa-solid": "^1.0.2",
+    "@iconify-react/material-symbols": "^1.0.17",
+    "@iconify-react/mdi": "^1.0.2",
     "@iconify/react": "^6.0.2",
     "axios": "^1.16.1",
     "bcryptjs": "^3.0.3",
