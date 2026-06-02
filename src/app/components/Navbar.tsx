@@ -28,9 +28,8 @@ export default function Navbar({ session, cart }: any) {
     }
   }, [])
 
-
   return (
-    <nav className="relative px-2">
+    <nav className="relative px-5 md:px-10 py-2 pb-4">
       <div className="flex justify-between items-center p-2">
         <div className="flex justify-center items-center">
           <Image src="/logo.webp" alt="logo" width={36} height={36} />
@@ -59,7 +58,7 @@ export default function Navbar({ session, cart }: any) {
               </button>
               <AnimatePresence>
                 {dropdown &&
-                  <motion.div exit={{ opacity: 0.1 }} initial={{ scale: 0.9 }} animate={{ scale: 1 }} transition={{ duration: 0.1 }} className="absolute w-60 bg-neutral-800 font-poppins rounded-lg top-12 -right-14">
+                  <motion.div exit={{ opacity: 0.1 }} initial={{ scale: 0.9 }} animate={{ scale: 1 }} transition={{ duration: 0.1 }} className="absolute w-60 bg-neutral-900 shadow-sm shadow-[rgba(100,100,100,0.2)] font-poppins rounded-lg top-14 -right-14 z-20">
                     <div className="flex flex-col justify-center items-center p-5 gap-y-5">
                       <h2 className="text-lg font-semibold">{session.user.name}</h2>
                       <div className="flex flex-col gap-y-2 select-none justify-center items-center">
@@ -88,15 +87,14 @@ export default function Navbar({ session, cart }: any) {
 
       <AnimatePresence>
         {mobileSearch &&
-          <motion.div exit={{ opacity: 0.1 }} initial={{ scale: 0.9 }} animate={{ scale: 1 }} transition={{ duration: 0.1 }} className="absolute top-0 bg-neutral-900 w-full h-screen left-0 p-2 shadow-md">
+          <motion.div exit={{ opacity: 0.1 }} initial={{ scale: 0.9 }} animate={{ scale: 1 }} transition={{ duration: 0.1 }} className="absolute top-0 bg-neutral-900 w-full h-screen left-0 p-2 shadow-md z-12">
             <div className="w-full flex gap-x-2 justify-center items-center mb-4">
               <div className="relative bg-red flex justify-center item-center w-full">
                 <input className="border-white text-sm border-2 rounded-full outline-0 p-3 pl-4 pr-10 w-full" type="text" placeholder="Search product" autoFocus />
-                <div className="absolute rounded-full right-2 top-1/2 -translate-y-1/2 p-1">
+                <div onClick={() => setMobileSearch(false)}  className="absolute rounded-full right-2 top-1/2 -translate-y-1/2 p-1">
                   <Icon className="text-xl" icon="fa6-solid:xmark" />
                 </div>
               </div>
-              <button onClick={() => setMobileSearch(false)} type="button" className="cursor-pointer font-poppins">Cancel</button>
             </div>
             <div className="flex justify-center font-poppins">
               <h3 className="text-lg">No search result found</h3>
