@@ -24,18 +24,17 @@ export default function Navbar({ session, cart }: any) {
     document.addEventListener("mousedown", hideDropdown)
     return () => {
       document.removeEventListener("mousedown", hideDropdown)
-
     }
   }, [])
 
   return (
     <nav className="relative px-5 md:px-10 py-2 pb-4">
       <div className="flex justify-between items-center p-2">
-        <div className="flex justify-center items-center">
+        <div className="flex items-center">
           <Image src="/logo.webp" alt="logo" width={36} height={36} />
           <div className="hidden min-[350px]:flex">
-            <h2 className="text-white shadow-amber-50 text-2xl font-bold font-nunito relative top-1">Shopp</h2>
-            <h2 className="text-orange-500 text-2xl font-bold font-nunito relative top-1">e</h2>
+            <span className="text-white shadow-amber-50 text-2xl font-bold font-nunito relative top-1">Shopp</span>
+            <span className="text-orange-500 text-2xl font-bold font-nunito relative top-1">e</span>
           </div>
         </div>
         <div className="flex justify-center items-center gap-x-4">

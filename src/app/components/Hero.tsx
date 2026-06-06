@@ -30,8 +30,8 @@ export default function Hero() {
                 <motion.p initial={{ y: -5, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.5, duration: 0.2 }} className="text-sm md:text-base">
                   Built for speed, powered by AI, designed for everyday life.
                 </motion.p>
-                <motion.a href="/product?seller=google&item=pixel%2010a" initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 1, duration: 0.2 }} className="text-sm md:text-base w-50 font-semibold bg-linear-to-r from-purple-600 to-blue-600 rounded-full p-2 select-none text-center" type="button">Shop</motion.a>
-                <motion.div initial={{ x: -10, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 1.5, duration: 0.2 }} className="flex gap-2 m-2 select-none">
+                <motion.a href="/product?seller=google&item=pixel%2010a" initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.8, duration: 0.2 }} className="text-sm md:text-base w-50 font-semibold bg-linear-to-r from-purple-600 to-blue-600 rounded-full p-2 select-none text-center" type="button">Shop</motion.a>
+                <motion.div initial={{ x: -10, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 1, duration: 0.2 }} className="flex gap-2 m-2 select-none">
                   <div className="flex items-center gap-2">
                     <span className="text-yellow-400">
                       <Icon fontSize={30} icon="material-symbols:delivery-truck-speed-rounded" />
@@ -58,33 +58,35 @@ export default function Hero() {
             </motion.div>
           </div>
         </div>
-        <div className="bg-neutral-800 min-h-50 rounded-2xl grid grid-cols-2">
-          <div className="m-5 flex justify-between flex-col">
-            <motion.h2 initial={{ y: -5, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2, duration: 0.2 }} className="text-xl font-semibold">
-              Apple Airpods
-            </motion.h2>
-            <motion.div initial={{ y: 5, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2, duration: 0.2 }}>
-              <p className="font-semibold text-xs">Starts from <b className="text-orange-500">$200</b></p>
-              <p className="font-semibold text-xs">Offer 20% off</p>
+        <div className="grid grid-cols-1 grid-rows-2 sm:grid-cols-2 sm:grid-rows-1 lg:grid-rows-2 lg:grid-cols-1 h-60 lg:h-120 gap-6">
+          <div className="bg-neutral-800 rounded-2xl flex justify-between">
+            <div className="m-5 flex justify-between flex-col">
+              <motion.h2 initial={{ y: -5, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2, duration: 0.2 }} className="text-xl font-semibold">
+                Apple Airpods
+              </motion.h2>
+              <motion.div initial={{ y: 5, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2, duration: 0.2 }}>
+                <p className="font-semibold text-xs">Starts from <b className="text-orange-500">$200</b></p>
+                <p className="font-semibold text-xs">Offer 20% off</p>
+              </motion.div>
+            </div>
+            <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.2, duration: 0.2 }} className="h-full p-5">
+              <Image className="object-contain h-full w-full" src={appleairpods} alt="" />
             </motion.div>
           </div>
-          <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.2, duration: 0.2 }} className="w-full h-full p-5">
-            <Image className="object-contain h-full w-full" src={appleairpods} alt="" />
-          </motion.div>
-        </div>
-        <div className="bg-neutral-800 min-h-50 rounded-2xl grid grid-cols-2">
-          <div className="m-5 flex justify-between flex-col">
-            <motion.h2 initial={{ y: -5, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2, duration: 0.2 }} className="text-xl font-semibold">
-              Security Camera
-            </motion.h2>
-            <motion.div initial={{ y: 5, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2, duration: 0.2 }}>
-              <p className="font-semibold text-xs">Starts from <b className="text-orange-500">$100</b></p>
-              <p className="font-semibold text-xs">Offer 20% off</p>
+          <div className="bg-neutral-800 rounded-2xl flex justify-between">
+            <div className="m-5 flex justify-between flex-col">
+              <motion.h2 initial={{ y: -5, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2, duration: 0.2 }} className="text-xl font-semibold">
+                Security Camera
+              </motion.h2>
+              <motion.div initial={{ y: 5, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2, duration: 0.2 }}>
+                <p className="font-semibold text-xs">Starts from <b className="text-orange-500">$100</b></p>
+                <p className="font-semibold text-xs">Offer 20% off</p>
+              </motion.div>
+            </div>
+            <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.2, duration: 0.2 }} className="h-full p-5">
+              <Image className="object-contain h-full w-full" src={micamera} alt="" />
             </motion.div>
           </div>
-          <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.2, duration: 0.2 }} className="w-full h-full p-5">
-            <Image className="object-contain h-full w-full" src={micamera} alt="" />
-          </motion.div>
         </div>
       </div>
     </section>

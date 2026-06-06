@@ -24,6 +24,7 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: "Shoppe",
   description: "Discover trending products, top brands, and the best deals from multiple sellers in one place.",
+  icons: "/favicon.ico"
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
