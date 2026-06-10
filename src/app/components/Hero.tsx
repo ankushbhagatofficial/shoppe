@@ -11,9 +11,9 @@ export default function Hero() {
   return (
     <section>
       <div className="grid lg:grid-cols-[2fr_1fr] gap-6">
-        <div className="bg-radial via-neutral-900 to-neutral-800 row-span-2 h-120 rounded-2xl overflow-hidden font-poppins">
+        <div className="relative -z-1 bg-radial via-neutral-900 to-neutral-800 row-span-2 h-120 rounded-2xl overflow-hidden font-poppins">
           <div className="relative h-full w-full aspect-video">
-            <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.2 }} className="absolute mx-5 my-3 z-10 top-0">
+            <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.2 }} className="absolute mx-5 my-3 z-10 top-0 select-none">
               <button className="flex gap-2 justify-center items-center text-yellow-300 p-1.5 border-2 rounded-full text-xs px-4 font-semibold" type="button">
                 <span>
                   <Icon icon="mdi:stars" />
@@ -69,7 +69,7 @@ export default function Hero() {
                 <p className="font-semibold text-xs">Offer 20% off</p>
               </motion.div>
             </div>
-            <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.2, duration: 0.2 }} className="h-full p-5">
+            <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.2, duration: 0.2 }} className="h-full p-5 select-none">
               <Image className="object-contain h-full w-full" src={appleairpods} alt="" />
             </motion.div>
           </div>
@@ -83,7 +83,7 @@ export default function Hero() {
                 <p className="font-semibold text-xs">Offer 20% off</p>
               </motion.div>
             </div>
-            <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.2, duration: 0.2 }} className="h-full p-5">
+            <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.2, duration: 0.2 }} className="h-full p-5 select-none">
               <Image className="object-contain h-full w-full" src={micamera} alt="" />
             </motion.div>
           </div>

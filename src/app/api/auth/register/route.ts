@@ -18,16 +18,25 @@ export async function POST(req: Request) {
     const result = userSchema.safeParse(body)
 
     if (!result.success) {
+      const message = result.error.flatten()
       return Response.json({
-        message: result.error.flatten()
+        message
       }, { status: 400 })
     }
 
+    const { name, email, password, role } = result.data
+
     await connectDB()
-    const { name, email, password } = result.data
 
     const hashPassword = bcrypt.hashSync(password, 10)
 
+    const isAdminExists = await User.exists({role: "admin"})
+   if (isAdminExists) {
+      return Response.json({
+        message: "exists:admin"
+      }, { status: 409 })
+
+    }
     const isUserExists = await User.findOne({ email })
     if (isUserExists) {
       return Response.json({
@@ -36,13 +45,15 @@ export async function POST(req: Request) {
 
     }
 
-    await User.create({
+    const user = await User.create({
       name,
       email,
+      role,
       password: hashPassword,
     })
 
     return Response.json({
+      user,
       message: "created:user"
     })
 

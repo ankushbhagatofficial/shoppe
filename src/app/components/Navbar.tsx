@@ -4,7 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { Icon } from "@iconify/react"
 import { AnimatePresence, motion } from "motion/react"
-import { signOut } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 import SearchIcon from '@iconify-react/fa-solid/search';
 import ShoppingIcon from '@iconify-react/mdi/shopping';
@@ -28,7 +27,7 @@ export default function Navbar({ session, cart }: any) {
   }, [])
 
   return (
-    <nav className="relative px-5 md:px-10 py-2 pb-4">
+    <nav className="relative px-5 md:px-10 py-2 pb-4 select-none">
       <div className="flex justify-between items-center p-2">
         <div className="flex items-center">
           <Image src="/logo.webp" alt="logo" width={36} height={36} />
@@ -66,7 +65,7 @@ export default function Navbar({ session, cart }: any) {
                         <Link className="underline-animate" href="/wishlist" type="button">Wishlist</Link>
                         <Link className="underline-animate" href="settings" type="button">Settings</Link>
                       </div>
-                      <button onClick={() => signOut()} className="select-none font-semibold cursor-pointer rounded-full bg-orange-500 text-white p-1 px-4 hover:brightness-90 transition-all duration-200" type="button">Logout</button>
+                      <a href="/logout" className="select-none font-semibold cursor-pointer rounded-full bg-orange-500 text-white p-1 px-4 hover:brightness-90 transition-all duration-200" type="button">Logout</a>
                     </div>
                   </motion.div>
                 }
@@ -90,7 +89,7 @@ export default function Navbar({ session, cart }: any) {
             <div className="w-full flex gap-x-2 justify-center items-center mb-4">
               <div className="relative bg-red flex justify-center item-center w-full">
                 <input className="border-white text-sm border-2 rounded-full outline-0 p-3 pl-4 pr-10 w-full" type="text" placeholder="Search product" autoFocus />
-                <div onClick={() => setMobileSearch(false)}  className="absolute rounded-full right-2 top-1/2 -translate-y-1/2 p-1">
+                <div onClick={() => setMobileSearch(false)} className="absolute rounded-full right-2 top-1/2 -translate-y-1/2 p-1">
                   <Icon className="text-xl" icon="fa6-solid:xmark" />
                 </div>
               </div>

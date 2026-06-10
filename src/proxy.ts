@@ -14,7 +14,10 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/login/:path*", "/register/:path*"]
+  matcher: [
+    "/login/:path*", "/register/:path*", // run for routes
+    "/((?!api|_next/static|_next/image|favicon.ico).*)" // skip routes
+  ]
 }
 
 

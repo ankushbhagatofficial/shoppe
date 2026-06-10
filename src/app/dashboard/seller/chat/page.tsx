@@ -1,6 +1,6 @@
 export default function page() {
   return (
-    <div>Customers</div>
+    <div>Chat</div>
   )
 }
 

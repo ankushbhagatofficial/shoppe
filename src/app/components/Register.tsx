@@ -7,20 +7,35 @@ import { useRouter } from "next/navigation"
 import { ChangeEvent, useEffect, useState } from "react"
 import Image from "next/image";
 import { Google } from "@/actions/OAuth"
-import axios from "axios"
+import { registerAction } from "@/actions/register"
+
+type User = {
+  name: string,
+  email: string,
+  role: string,
+  password: string,
+  cpassword: string
+}
 
 type FieldErrors = {
   name?: string,
   email?: string,
+  role?: string,
   password?: string,
   cpassword?: string
 }
 
-export default function page() {
+export default function Register({ role = "user" }: { role: string }) {
   const router = useRouter()
   const [loadingA, setLoadingA] = useState(false)
   const [loadingB, setLoadingB] = useState(false)
-  const [formData, setFormData] = useState({})
+  const [formData, setFormData] = useState<User>({
+    role,
+    name: "",
+    email: "",
+    password: "",
+    cpassword: "",
+  })
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [showPassword, setShowPassword] = useState(false)
 
@@ -50,20 +65,16 @@ export default function page() {
     e.preventDefault()
     setLoadingA(true)
     setFieldErrors({})
+    console.log(formData);
 
-    try {
-      const res = await axios.post("/api/auth/register", formData)
-      console.log(res.data);
-      if (res.status === 200) {
-        // router.push("/auth/verify")
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (error?.response?.status === 400) {
-          setFieldErrors(error?.response?.data?.message.fieldErrors)
-        }
-      }
+
+    const result = await registerAction(formData)
+    if (!result?.success) {
+      setFieldErrors(result?.errors)
+    } else if (!result?.message) {
+      alert(result?.message)
     }
+
     setLoadingA(false)
   }
 

@@ -6,38 +6,40 @@ import { Icon } from "@iconify/react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 
-export default function Sidebar({ children }: { children: ReactNode }) {
+export default function Sidebar({ children, session }: { children: ReactNode, session: any }) {
   const [open, setOpen] = useState(false)
   const navRef = useRef<HTMLElement>(null)
   const pathname = usePathname()
+  const role = pathname.split("/")[2]
+
   const links = [
     {
-      href: "/admin",
+      href: "",
       label: "Dashboard",
       icon: "material-symbols:dashboard-outline-rounded",
     },
     {
-      href: "/admin/customers",
-      label: "Customers",
-      icon: "lucide:users",
-    },
-    {
-      href: "/admin/products",
+      href: "/products",
       label: "Products",
       icon: "material-symbols:featured-seasonal-and-gifts-rounded",
     },
     {
-      href: "/admin/orders",
+      href: "/orders",
       label: "Orders",
       icon: "material-symbols:shopping-cart-outline-rounded",
     },
     {
-      href: "/admin/sellers",
+      href: "/sellers",
       label: "Sellers",
       icon: "material-symbols:store-outline-rounded",
     },
     {
-      href: "/admin/chat",
+      href: "/users",
+      label: "Users",
+      icon: "lucide:users",
+    },
+    {
+      href: "/chat",
       label: "Chat",
       icon: "material-symbols:chat-outline-rounded",
     }
@@ -57,24 +59,29 @@ export default function Sidebar({ children }: { children: ReactNode }) {
   return (
     <div>
       <div className={`fixed -z-10 transition-all duration-400 ${open && "bg-white/15 backdrop-blur-xs z-1"} w-full h-dvh`}></div>
-      <aside className={`${open ? "left-0" : "-left-full"} z-10 transition-all duration-400 w-75 h-dvh bg-neutral-800 fixed lg:left-0`}>
+      <aside className={`${open ? "left-0" : "-left-full"} select-none z-10 transition-all duration-400 w-75 h-dvh bg-neutral-800 fixed lg:left-0`}>
         <nav ref={navRef} className="flex flex-col p-5 justify-between h-dvh font-poppins">
           <div className="flex flex-col gap-5 font-poppins">
-            <div className="flex items-center px-4">
+            <Link href="/" className="flex items-center px-4 self-start">
               <Image src="/logo.webp" alt="logo" width={36} height={36} />
               <div className="hidden min-[350px]:flex">
                 <span className="text-white shadow-amber-50 text-2xl font-bold font-nunito relative top-1">Shopp</span>
                 <span className="text-orange-500 text-2xl font-bold font-nunito relative top-1">e</span>
               </div>
-            </div>
+            </Link>
             {
-              links.map((item, key) => (
-                <Link onClick={() => setOpen(false)} href={item.href} key={key} className={`flex px-5 py-2 items-center gap-3 rounded-full ${pathname === item.href ? "bg-blue-700 cursor-default" : "active:bg-neutral-700 hover:bg-neutral-700"}`}><Icon fontSize={20} icon={item.icon} />{item.label}</Link>
-              ))
+              links.map((item, key) => {
+                const href = `/dashboard/${role}${item.href}`
+                if (role === "seller" && ["Sellers", "Users"].includes(item.label)) return
+
+                return (
+                  <Link onClick={() => setOpen(false)} href={href} key={key} className={`flex px-5 py-2 items-center gap-3 rounded-full ${pathname === href ? "bg-blue-700 cursor-default" : "active:bg-neutral-700 hover:bg-neutral-700"}`}><Icon fontSize={20} icon={item.icon} />{item.label}</Link>
+                )
+              })
             }
           </div>
           <div>
-            <Link href="/logout" className="flex px-5 mb-10 py-2 gap-3 items-center rounded-full bg-neutral-700" ><Icon icon="line-md:log-out" />Logout</Link>
+            <a href="/logout" className="flex px-5 mb-10 py-2 gap-3 items-center rounded-full bg-neutral-700" ><Icon icon="line-md:log-out" />Logout</a>
           </div>
         </nav>
       </aside>
@@ -91,7 +98,7 @@ export default function Sidebar({ children }: { children: ReactNode }) {
             </svg>
           </span>
           <div>
-            <span className="font-semibold">{links.find((item) => item.href === pathname)?.label}</span>
+            <span className="font-semibold">{links.find((item) => `/dashboard/${role}${item.href}` === pathname)?.label}</span>
           </div>
         </nav>
         <main className="p-2">
