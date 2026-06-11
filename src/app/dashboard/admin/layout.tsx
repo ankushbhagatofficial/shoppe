@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import type { Metadata } from "next";
-import Sidebar from "@/app/components/Sidebar";
+import Sidebar from "@/components/Sidebar";
 import { auth } from "@/lib/auth";
 
 export const metadata: Metadata = {
@@ -13,9 +13,9 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   const session = await auth()
 
   return (
-    <body>
+    <div>
       <Sidebar session={session}>{children}</Sidebar>
-    </body>
+    </div>
   )
 }
 

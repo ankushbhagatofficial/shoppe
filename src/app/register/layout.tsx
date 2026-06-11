@@ -9,9 +9,9 @@ export const metadata: Metadata = {
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   return (
-    <body>
+    <div>
       {children}
-    </body>
+    </div>
   )
 }
 

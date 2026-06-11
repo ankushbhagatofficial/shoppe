@@ -33,14 +33,14 @@ export async function POST(req: Request) {
     const isAdminExists = await User.exists({role: "admin"})
    if (isAdminExists) {
       return Response.json({
-        message: "exists:admin"
+        message: "Internal Error"
       }, { status: 409 })
 
     }
     const isUserExists = await User.findOne({ email })
     if (isUserExists) {
       return Response.json({
-        message: "exists:user"
+        message: "Email already used try diffrent."
       }, { status: 409 })
 
     }
