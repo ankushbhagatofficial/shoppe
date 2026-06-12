@@ -44,7 +44,10 @@ export async function registerAction(formData: User): Promise<{ success?: boolea
 
   switch (res?.data?.user.role) {
     case "user": redirect("/login")
-    case "seller": redirect("/seller/account")
     case "admin": redirect("/dashboard/admin")
   }
+}
+
+export async function sellerAction(formData: any): Promise<any> {
+  redirect("/seller/onboarding")
 }
