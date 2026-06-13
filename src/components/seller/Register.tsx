@@ -76,27 +76,27 @@ export default function Register({ setStep }: { setStep?: Function }) {
         </div>
         <div className="flex flex-col gap-1">
           <label className="font-semibold text-sm">Store Name</label>
-          <input className="border-2 p-1 px-2 rounded-md text-sm" type="text" name="store" placeholder="Enter your store name" />
+          <input className="border-2 p-2 rounded-md text-sm" type="text" name="store" placeholder="Enter your store name" />
           {fieldErrors?.store && <span className="mt-1 text-xs text-red-500">{fieldErrors?.store}</span>}
         </div>
         <div className="flex flex-col gap-1">
           <label className="font-semibold text-sm">Owner Name</label>
-          <input className="border-2 p-1 px-2 rounded-md text-sm" type="text" name="name" placeholder="Enter your full name" />
+          <input className="border-2 p-2 rounded-md text-sm" type="text" name="name" placeholder="Enter your full name" />
           {fieldErrors?.name && <span className="mt-1 text-xs text-red-500">{fieldErrors?.name}</span>}
         </div>
         <div className="flex flex-col gap-1">
           <label className="font-semibold text-sm">Business Email</label>
-          <input className="border-2 p-1 px-2 rounded-md text-sm" type="email" name="email" placeholder="Enter your email address" />
+          <input className="border-2 p-2 rounded-md text-sm" type="email" name="email" placeholder="Enter your email address" />
           {fieldErrors?.email && <span className="mt-1 text-xs text-red-500">{fieldErrors?.email}</span>}
         </div>
         <div className="flex flex-col gap-1">
           <label className="font-semibold text-sm">Phone Number</label>
-          <input className="border-2 p-1 px-2 rounded-md text-sm" type="number" name="phone" placeholder="Enter your phone number" />
+          <input className="border-2 p-2 rounded-md text-sm" type="number" name="phone" placeholder="Enter your phone number" />
           {fieldErrors?.phone && <span className="mt-1 text-xs text-red-500">{fieldErrors?.phone}</span>}
         </div>
         <div className="flex flex-col gap-1">
           <label className="font-semibold text-sm">Password</label>
-          <input className="border-2 p-1 px-2 rounded-md text-sm" type="password" name="password" placeholder="Enter your passowrd" autoComplete="new-password" />
+          <input className="border-2 p-2 rounded-md text-sm" type="password" name="password" placeholder="Enter your passowrd" autoComplete="new-password" />
           {fieldErrors?.password && <span className="mt-1 text-xs text-red-500">{fieldErrors?.password}</span>}
         </div>
         <label className="flex text-xs gap-2">

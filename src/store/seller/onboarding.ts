@@ -2,22 +2,24 @@ import { create } from "zustand"
 
 type OnboardingStore = {
   step: number,
-  page: number,
   active: boolean,
-  complete: { business: boolean, bank: boolean, verification: boolean, setup: boolean },
+  pages: {
+    business: boolean,
+    bank: boolean,
+    verification: boolean,
+    setup: boolean
+  },
   nextStep: () => void,
   prevStep: () => void,
   togglePage: () => void,
   setStep: (step: number) => void,
-  setPage: (page: number) => void,
-  setComplete: (page: keyof OnboardingStore["complete"]) => void,
+  setPage: (page: Partial<OnboardingStore["pages"]>) => void,
 }
 
 export const useOnboardingStore = create<OnboardingStore>((set, get) => ({
   step: 0,
-  page: 1,
   active: false,
-  complete: {
+  pages: {
     business: false,
     bank: false,
     verification: false,
@@ -26,21 +28,21 @@ export const useOnboardingStore = create<OnboardingStore>((set, get) => ({
 
   nextStep: () => {
     set(state => ({
-      step: state.step + 1 % state.step
+      pages: { ...state.pages, [Object.keys(state.pages)[state.step]]: true },
+      step: Math.min(Object.keys(state.pages).length - 1, state.step + 1)
     }))
   },
 
   prevStep: () => {
     set(state => ({
-      step: Math.max(1, state.step - 1)
+      step: Math.max(0, state.step - 1)
     }))
   },
 
   setStep: (step) => set({ step }),
-  setPage: (page) => set({ page }),
   togglePage: () => set(s => ({ active: !s.active })),
-  setComplete: (page) => set(state => ({
-    complete: { ...state.complete, [page]: !state.complete[page] }
+  setPage: (pages) => set(state => ({
+    pages: { ...state.pages, ...pages }
   }))
 
 }))

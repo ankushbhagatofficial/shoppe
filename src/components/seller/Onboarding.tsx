@@ -6,9 +6,9 @@ import CartChecklist from "@/assets/cart_checklist.png"
 import { useOnboardingStore } from "@/store/seller/onboarding"
 
 export function OnboardingProgress({ pos = "y" }: { pos?: "x" | "y" }) {
-  const { step, complete, setStep, setPage, togglePage } = useOnboardingStore()
+  const { pages, step, setStep, togglePage } = useOnboardingStore()
 
-  type pageID = "business" | "bank" | "verification" | "setup"
+  type PageId = "business" | "bank" | "verification" | "setup"
 
   const steps = [
     {
@@ -49,9 +49,9 @@ export function OnboardingProgress({ pos = "y" }: { pos?: "x" | "y" }) {
                 <div onClick={() => {
                   togglePage()
                   setStep(index)
-                }} className={`flex cursor-pointer select-none border-3 ${step > index ? "bg-green-600/80" : "bg-neutral-700"} ${step === index ? "border-yellow-500" : "border-transparent"} items-center rounded-md p-2 gap-2`}>
-                  <div className={`relative flex justify-center items-center w-10 h-10 rounded-full ${step > index ? "bg-green-800" : "bg-yellow-500"}`}>
-                    <Icon fontSize={25} icon={step > index ? "material-symbols:check-rounded" : item.icon} />
+                }} className={`flex cursor-pointer select-none border-3 ${pages[item.id as PageId] ? "bg-green-600/80" : "bg-neutral-700"} ${step === index ? "border-yellow-500" : "border-transparent"} items-center rounded-md p-2 gap-2`}>
+                  <div className={`relative flex justify-center items-center w-10 h-10 rounded-full ${pages[item.id as PageId] ? "bg-green-800" : "bg-yellow-500"}`}>
+                    <Icon fontSize={25} icon={pages[item.id as PageId] ? "material-symbols:check-rounded" : item.icon} />
                   </div>
                   <div className="flex flex-col">
                     <h1 className="font-semibold">{item.title}</h1>
@@ -59,7 +59,7 @@ export function OnboardingProgress({ pos = "y" }: { pos?: "x" | "y" }) {
                   </div>
                 </div>
                 {index !== steps.length - 1 &&
-                  <div className={`relative left-6 h-10 w-1 ${step > index ? "bg-green-800" : "bg-white/20"}`}></div>
+                  <div className={`relative left-6 h-10 w-1 ${pages[item.id as PageId] ? "bg-green-800" : "bg-white/20"}`}></div>
                 }
 
               </div>
@@ -67,12 +67,12 @@ export function OnboardingProgress({ pos = "y" }: { pos?: "x" | "y" }) {
 
             {pos === "x" &&
               <div className="flex items-center">
-                <div onClick={() => setStep(index)} className={`relative flex justify-center items-center w-10 h-10 rounded-full border-3 ${step > index ? "bg-green-600" : "bg-neutral-700"} ${step === index ? "border-green-600" : "border-transparent"}`}>
-                  <Icon fontSize={25} icon={step > index ? "material-symbols:check-rounded" : item.icon} />
+                <div onClick={() => setStep(index)} className={`relative flex justify-center items-center w-10 h-10 rounded-full border-3 ${pages[item.id as PageId] ? "bg-green-600" : "bg-neutral-700"} ${step === index ? "border-green-400" : "border-transparent"}`}>
+                  <Icon fontSize={25} icon={pages[item.id as PageId] ? "material-symbols:check-rounded" : item.icon} />
                 </div>
 
                 {index !== steps.length - 1 &&
-                  <div className={`h-1 w-15 ${step > index ? "bg-green-600" : "bg-white/20"}`}></div>
+                  <div className={`h-1 w-15 ${pages[item.id as PageId] ? "bg-green-600" : "bg-white/20"}`}></div>
                 }
               </div>
 
@@ -111,7 +111,7 @@ export default function page() {
           </div>
         </div>
         <div className="flex justify-center lg:justify-start">
-          <button onClick={() => togglePage()} className="p-2 w-1/2 bg-white text-black rounded-full font-semibold cursor-pointer">Continue</button>
+          <button onClick={() => togglePage()} className="p-2 w-full lg:w-1/2 bg-white text-black rounded-full font-semibold cursor-pointer">Continue</button>
         </div>
       </div>
     </div>
