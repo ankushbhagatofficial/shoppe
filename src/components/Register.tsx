@@ -12,20 +12,19 @@ import { registerAction } from "@/actions/register"
 type User = {
   name: string,
   email: string,
-  role: string,
   password: string,
-  cpassword: string
+  confirmPassword: string
 }
 
 type FieldErrors = {
   name?: string,
   email?: string,
-  role?: string,
-  password?: string,
-  cpassword?: string
+  password?: string
+  confirmPassword?: string
 }
 
-function Role({ admin, role, setRole, setStep }: { admin: boolean, role: string, setRole: Function, setStep: Function }) {
+function Role({ admin, setStep }: { admin: boolean, setStep: Function }) {
+  const [role, setRole] = useState("user")
   const router = useRouter()
 
   return (
@@ -90,16 +89,15 @@ function Role({ admin, role, setRole, setStep }: { admin: boolean, role: string,
   )
 }
 
-function Register({ role = "user" }: { role: string }) {
+function Register() {
   const router = useRouter()
   const [loadingA, setLoadingA] = useState(false)
   const [loadingB, setLoadingB] = useState(false)
   const [formData, setFormData] = useState<User>({
-    role,
     name: "",
     email: "",
     password: "",
-    cpassword: "",
+    confirmPassword: ""
   })
   const [errorMessage, setErrorMessage] = useState<string | undefined>("")
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
@@ -176,10 +174,10 @@ function Register({ role = "user" }: { role: string }) {
           <div className="flex flex-col">
             <label className="font-semibold mb-1">Confirm Password</label>
             <div className="relative">
-              <input onChange={handleOnChange} className="text-sm border-2 border-gray-400 rounded p-2 w-full outline-0 focus:border-white" type={showPassword ? "text" : "password"} name="cpassword" placeholder="Confirm your password" autoComplete="new-password" required />
+              <input onChange={handleOnChange} className="text-sm border-2 border-gray-400 rounded p-2 w-full outline-0 focus:border-white" type={showPassword ? "text" : "password"} name="confirmPassword" placeholder="Confirm your password" autoComplete="new-password" required />
               <Icon className="absolute cursor-pointer text-xl top-1/2 right-1 -translate-1/2" onClick={() => setShowPassword(!showPassword)} icon={showPassword ? "mdi:eye-outline" : "mdi:eye-off-outline"} />
             </div>
-            {fieldErrors?.cpassword && <span className="mt-1 text-xs text-red-500">{fieldErrors?.cpassword}</span>}
+            {fieldErrors?.confirmPassword && <span className="mt-1 text-xs text-red-500">{fieldErrors?.confirmPassword}</span>}
           </div>
 
           <AnimatePresence>
@@ -208,10 +206,9 @@ function Register({ role = "user" }: { role: string }) {
 }
 
 export default function page({ admin }: { admin: boolean }) {
-  const [role, setRole] = useState("user")
   const [step, setStep] = useState(1)
   switch (step) {
-    case 1: return <Role admin={admin} role={role} setRole={setRole} setStep={setStep} />
-    case 2: return <Register role={role} />
+    case 1: return <Role admin={admin} setStep={setStep} />
+    case 2: return <Register />
   }
 }

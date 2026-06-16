@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+
 import { AnimatePresence, motion } from "motion/react"
 import Onboarding, { OnboardingProgress } from "@/components/seller/Onboarding"
 import { useOnboardingStore } from "@/store/seller/onboarding"
@@ -10,7 +10,7 @@ import Setup from "@/components/seller/onboarding/Setup"
 import { Icon } from "@iconify/react"
 
 export default function page() {
-  const { step, active, togglePage, nextStep, prevStep } = useOnboardingStore()
+  const { step, active, togglePage } = useOnboardingStore()
   const pages = [Business, Bank, Verification, Setup]
   const names = ["Business Details", "Bank Details", "Verification", "Setup Store"]
   const Page = pages[step]
@@ -39,7 +39,7 @@ export default function page() {
               duration: 0.2,
             }}
             className="lg:flex lg:justify-center lg:items-center h-dvh">
-            <div className="relative bg-neutral-800 h-full min-h-150 lg:h-auto lg:max-w-[80dvw] lg:w-200 lg:rounded-xl">
+            <div className="relative bg-neutral-800 h-dvh overflow-y-auto min-h-150 lg:h-auto lg:max-h-175 lg:max-w-[80dvw] lg:w-200 lg:rounded-xl">
               <div className="flex justify-between items-center p-5 h-12 border-b border-white/20">
                 <button onClick={() => togglePage()} className="cursor-pointer">
                   <Icon fontSize={20} icon="line-md:arrow-left" />
@@ -50,7 +50,7 @@ export default function page() {
               <div className="flex flex-col items-center justify-center p-5">
                 <OnboardingProgress pos="x" />
               </div>
-              <div className="p-5 lg:p-10">
+              <div className="p-5 lg:p-10 select-none">
                 <Page />
               </div>
             </div>

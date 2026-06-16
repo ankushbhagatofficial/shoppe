@@ -33,7 +33,7 @@ export function OnboardingProgress({ pos = "y" }: { pos?: "x" | "y" }) {
     {
       id: "setup",
       title: "Shop Setup",
-      icon: "boxicons:store-filled",
+      icon: "mdi:store-edit",
       desc: "Customise your store profile",
     },
   ]

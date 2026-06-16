@@ -81,14 +81,14 @@ export default function Verification() {
       <h2 className="text-sm">Upload documents to verify your identity and business.</h2>
       {
         content.map(item => (
-          <div className={`flex justify-between items-center p-5 gap-2 border rounded-md ${images[item.name as keyof Images]?.name && "bg-green-600/20 border-green-400 border-2"}`}>
+          <div key={item.name} className={`flex justify-between items-center p-5 gap-2 border rounded-md ${images[item.name as keyof Images]?.name && "bg-green-600/20 border-green-400 border-2"}`}>
             <div className="flex gap-5">
               <div className="flex justify-center items-center">
                 <Icon fontSize={30} icon="mdi:id-card-outline" />
               </div>
               <div>
                 <h2 className="font-semibold text-sm">{item.label}</h2>
-                <p className={`text-xs ${images.pan?.name && "text-green-400"}`}>
+                <p className={`text-xs ${images[item.name as keyof Images]?.name && "text-green-400"}`}>
                   {images[item.name as keyof Images]?.name ?
                     "Image uploded successfully"
                     :
@@ -100,7 +100,7 @@ export default function Verification() {
             <label>
               <input onChange={handleOnChange} className="hidden" type="file" name={item.name} accept=".jpg,.jpeg,.webp,.png,.avif" />
               <div className={`p-1.5 px-3 text-sm font-semibold cursor-pointer rounded-sm bg-white/85 text-black`}>
-                {images.pan?.name ?
+                {images[item.name as keyof Images]?.name ?
                   "Replace"
                   :
                   "Upload"

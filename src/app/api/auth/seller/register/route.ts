@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs"
 import connectDB from "@/lib/mongodb"
-import User from "@/lib/model/user.model"
-import { userSchema } from "@/lib/zod/user.schema"
+import { sellerSchema } from "@/lib/zod/seller/register.schema"
+import Seller from "@/lib/model/seller.model"
 
 export async function POST(req: Request) {
   try {
@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     }
     const body = await req.json()
 
-    const result = userSchema.safeParse(body)
+    const result = sellerSchema.safeParse(body)
 
     if (!result.success) {
       const message = result.error.flatten()
@@ -24,29 +24,31 @@ export async function POST(req: Request) {
       }, { status: 400 })
     }
 
-    const { name, email, password } = result.data
+    const { name, email, phone, password, terms } = result.data
 
     await connectDB()
 
     const hashPassword = bcrypt.hashSync(password, 10)
 
-    const isUserExists = await User.findOne({ email })
+    const isUserExists = await Seller.findOne({ email })
     if (isUserExists) {
       return Response.json({
-        message: "Email already used try diffrent."
+        message: "Email already used, try diffrent."
       }, { status: 409 })
     }
 
-    const user = await User.create({
+    const seller = await Seller.create({
       name,
       email,
-      role: body.role,
+      phone,
+      terms,
+      role: "seller",
       password: hashPassword,
     })
 
     return Response.json({
-      user,
-      message: "created:user"
+      seller,
+      message: "created:seller"
     })
 
   } catch (error) {
