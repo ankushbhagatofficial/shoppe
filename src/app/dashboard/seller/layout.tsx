@@ -2,6 +2,9 @@ import { ReactNode } from "react";
 import type { Metadata } from "next";
 import Sidebar from "@/components/Sidebar";
 import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import connectDB from "@/lib/mongodb";
+import Seller from "@/lib/model/seller.model";
 
 export const metadata: Metadata = {
   title: "Shoppe | Seller Dashboard",
@@ -11,6 +14,18 @@ export const metadata: Metadata = {
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   const session = await auth()
+  const user = session?.user
+  await connectDB()
+
+  if (user?.role === "seller") {
+    const seller = await Seller.findById(user?.id)
+    // console.log(seller);
+    if (!seller.onboardingComplete) {
+      redirect("/seller/onboarding")
+    }
+  } else {
+    redirect("/seller/login")
+  }
 
   return (
     <div>

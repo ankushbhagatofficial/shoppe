@@ -24,36 +24,30 @@ const sellerSchema = new Schema({
     maxlength: [60, "maxlength:60"]
   },
 
-  storeSlug: {
-    type: String,
-    trim: true,
-    unique: true,
-    lowercase: true,
-  },
-
   phone: {
     type: String,
     trim: true,
     match: [/^[6-9]\d{9}$/, "invalid:number"],
   },
 
-  businessType: {
-    type: String,
-    enum: {
-      values: ["individual", "company"],
-      message: "invalid:businessType",
+  business: {
+    businessType: {
+      type: String,
+      enum: {
+        values: ["individual", "company"],
+        message: "invalid:businessType",
+      },
     },
-    default: "individual"
-  },
 
-  gstNumber: {
-    type: String,
-    default: "",
-  },
+    gstNumber: {
+      type: String,
+      default: "",
+    },
 
-  address: {
-    type: String,
-    default: "",
+    businessAddress: {
+      type: String,
+      default: "",
+    },
   },
 
   bank: {
@@ -72,7 +66,7 @@ const sellerSchema = new Schema({
       }
     },
 
-    aadhaarCard: {
+    identityCard: {
       url: String,
       verified: {
         type: Boolean,
@@ -95,6 +89,14 @@ const sellerSchema = new Schema({
   },
 
   store: {
+    url: {
+      type: String,
+      trim: true,
+      unique: true,
+      lowercase: true,
+      sparse: true,
+      required: false
+    },
     name: String,
     logo: String,
     banner: String,

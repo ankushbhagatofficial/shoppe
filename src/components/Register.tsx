@@ -8,20 +8,7 @@ import { ChangeEvent, useEffect, useState } from "react"
 import Image from "next/image";
 import { Google } from "@/actions/OAuth"
 import { registerAction } from "@/actions/register"
-
-type User = {
-  name: string,
-  email: string,
-  password: string,
-  confirmPassword: string
-}
-
-type FieldErrors = {
-  name?: string,
-  email?: string,
-  password?: string
-  confirmPassword?: string
-}
+import { UserRegistration } from "@/types/user"
 
 function Role({ admin, setStep }: { admin: boolean, setStep: Function }) {
   const [role, setRole] = useState("user")
@@ -93,14 +80,14 @@ function Register() {
   const router = useRouter()
   const [loadingA, setLoadingA] = useState(false)
   const [loadingB, setLoadingB] = useState(false)
-  const [formData, setFormData] = useState<User>({
+  const [formData, setFormData] = useState<UserRegistration>({
     name: "",
     email: "",
     password: "",
     confirmPassword: ""
   })
   const [errorMessage, setErrorMessage] = useState<string | undefined>("")
-  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
+  const [fieldErrors, setFieldErrors] = useState<Partial<UserRegistration>>({})
   const [showPassword, setShowPassword] = useState(false)
 
   useEffect(() => {

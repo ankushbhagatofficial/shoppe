@@ -1,37 +1,11 @@
+import { onboardingAction } from "@/actions/onboarding";
 import { useOnboardingStore } from "@/store/seller/onboarding";
 import { Icon } from "@iconify/react";
-import { ChangeEvent, SyntheticEvent, useState } from "react";
-
-type Images = {
-  logo: {
-    name: string,
-    src: File,
-    loading: boolean
-  },
-
-  banner: {
-    name: string,
-    src: File,
-    loading: boolean
-  }
-}
-
-type Profile = {
-  storeName: string,
-  storeLogo: {
-    name: string,
-    src: string,
-  },
-  storeBanner: {
-    name: string,
-    src: string,
-  },
-  storeDescription: string
-}
+import { ChangeEvent, SyntheticEvent } from "react";
+import { redirect } from "next/navigation"
 
 export default function Setup() {
-  const { nextStep, formData, setFormData } = useOnboardingStore()
-  const [images, setImages] = useState<Partial<Images>>({})
+  const { reset, nextStep, formData, setFormData, togglePage } = useOnboardingStore()
 
   const handleChar = (e: SyntheticEvent<HTMLTextAreaElement>) => {
     const target = e.currentTarget
@@ -50,15 +24,13 @@ export default function Setup() {
       setFormData({
         [name]: {
           name: image?.name,
-          src: URL.createObjectURL(image)
+          blob: URL.createObjectURL(image)
         }
 
       })
       console.log(image);
 
     }
-    if (!image) return
-
   }
 
   const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -67,9 +39,15 @@ export default function Setup() {
     })
   }
 
-  const handleSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault()
-    nextStep()
+    const result = await onboardingAction(formData)
+    if (result?.success) {
+      nextStep()
+      togglePage()
+      reset()
+      redirect("/dashboard")
+    }
   }
 
   return (
@@ -82,9 +60,9 @@ export default function Setup() {
           <label className="flex-1">
             <input onChange={handleImageChange} className="hidden" accept=".jpg,.jpeg,.webp,.png,.avif" type="file" name="storeLogo" />
             <div className="h-40 rounded-md border-dashed border-2 border-white/60 flex flex-col justify-center items-center overflow-hidden">
-              {formData?.storeLogo?.src ?
+              {formData?.storeLogo?.blob ?
                 <img className="object-contain h-full w-full p-2"
-                  src={formData.storeLogo.src} alt="" />
+                  src={formData.storeLogo.blob} alt="" />
                 :
                 <div className="flex flex-col justify-center items-center">
                   <Icon fontSize={25} icon="mdi:cloud-upload-outline" />
@@ -100,10 +78,10 @@ export default function Setup() {
           <label className="flex-1">
             <input onChange={handleImageChange} className="hidden" accept=".jpg,.jpeg,.webp,.png,.avif" type="file" name="storeBanner" />
             <div className="h-40 rounded-md border-dashed border-2 border-white/60 flex flex-col justify-center items-center overflow-hidden">
-              {formData.storeBanner?.src
+              {formData.storeBanner?.blob
                 ?
                 <img className="object-contain h-full w-full p-2"
-                  src={formData.storeBanner.src} alt="" />
+                  src={formData.storeBanner.blob} alt="" />
                 :
                 <div className="flex flex-col justify-center items-center">
                   <Icon fontSize={25} icon="mdi:cloud-upload-outline" />
@@ -118,7 +96,23 @@ export default function Setup() {
 
       <div className="flex flex-col gap-2">
         <label className="text-sm font-semibold">Store Name</label>
-        <input onChange={handleOnChange} value={formData.storeName} maxLength={30} className="border-2 rounded-sm p-2 text-sm" type="text" name="storeName" placeholder="Enter your store name" />
+        <input onChange={handleOnChange} value={formData.storeName} required maxLength={30} className="border-2 rounded-sm p-2 text-sm" type="text" name="storeName" placeholder="Enter your store name" />
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <label className="text-sm font-semibold">Store URL</label>
+        <div className="flex border-2 rounded-sm items-center text-sm px-2">
+          <span className="text-neutral-400/80">{window.location.origin}/store/</span>
+          <input onChange={(e) =>
+            setFormData({
+              [e.target.name]: e.target.value
+                .toLowerCase()
+                .replace(/[^a-z0-9-]/g, "")
+                .replace(/\s+/g, "-")
+                .replace(/-+/g, "-")
+            })
+          } value={formData.storeURL} required maxLength={30} className="py-2 w-full outline-0" type="text" name="storeURL" />
+        </div>
       </div>
 
       <div className="flex flex-col gap-2">

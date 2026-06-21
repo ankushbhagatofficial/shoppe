@@ -27,7 +27,7 @@ export default function Navbar({ session, cart }: any) {
   }, [])
 
   return (
-    <nav className="relative px-5 md:px-10 py-2 pb-4 select-none">
+    <nav className="relative py-2 pb-4 select-none px-5 md:px-10">
       <div className="flex justify-between items-center p-2">
         <div className="flex items-center">
           <Image src="/logo.webp" alt="logo" width={36} height={36} />
@@ -87,15 +87,15 @@ export default function Navbar({ session, cart }: any) {
         {mobileSearch &&
           <motion.div exit={{ opacity: 0.1 }} initial={{ scale: 0.9 }} animate={{ scale: 1 }} transition={{ duration: 0.1 }} className="absolute top-0 bg-neutral-900 w-full h-screen left-0 p-2 shadow-md z-12">
             <div className="w-full flex gap-x-2 justify-center items-center mb-4">
-              <div className="relative bg-red flex justify-center item-center w-full">
-                <input className="border-white text-sm border-2 rounded-full outline-0 p-3 pl-4 pr-10 w-full" type="text" placeholder="Search product" autoFocus />
-                <div onClick={() => setMobileSearch(false)} className="absolute rounded-full right-2 top-1/2 -translate-y-1/2 p-1">
+              <div className="px-2 bg-red flex justify-center item-center w-full border-white border-2 rounded-md">
+                <input className="text-sm outline-0 py-2 w-full" type="text" placeholder="Search product" autoFocus />
+                <div onClick={() => setMobileSearch(false)} className="rounded-full flex items-center">
                   <Icon className="text-xl" icon="fa6-solid:xmark" />
                 </div>
               </div>
             </div>
             <div className="flex justify-center font-poppins">
-              <h3 className="text-lg">No search result found</h3>
+              <h3 className="text-md font-semibold text-white/60">No search result found</h3>
             </div>
           </motion.div>
         }

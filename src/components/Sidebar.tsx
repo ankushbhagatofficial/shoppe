@@ -42,8 +42,19 @@ export default function Sidebar({ children, session }: { children: ReactNode, se
       href: "/chat",
       label: "Chat",
       icon: "material-symbols:chat-outline-rounded",
-    }
+    },
   ]
+
+  const paths = links.map(item => ({
+    href: item.href,
+    label: item.label
+  }))
+
+  paths.push({
+    href: "/settings",
+    label: "Settings"
+  })
+
   useEffect(() => {
     const hideSidebar = (e: MouseEvent) => {
       if (navRef.current && !navRef.current.contains(e.target as Node)) {
@@ -60,7 +71,7 @@ export default function Sidebar({ children, session }: { children: ReactNode, se
     <div>
       <div className={`fixed -z-10 transition-all duration-400 ${open && "bg-white/15 backdrop-blur-xs z-1"} w-full h-dvh`}></div>
       <aside className={`${open ? "left-0" : "-left-full"} select-none z-10 transition-all duration-400 w-75 h-dvh bg-neutral-800 fixed lg:left-0`}>
-        <nav ref={navRef} className="flex flex-col p-5 justify-between h-dvh font-poppins">
+        <nav ref={navRef} className="flex flex-col p-5 justify-between h-dvh font-poppins overflow-y-auto gap-5">
           <div className="flex flex-col gap-5 font-poppins">
             <Link href="/" className="flex items-center px-4 self-start">
               <Image src="/logo.webp" alt="logo" width={36} height={36} />
@@ -79,6 +90,23 @@ export default function Sidebar({ children, session }: { children: ReactNode, se
                 )
               })
             }
+            <div className="flex flex-col gap-2">
+              <span className="px-5 text-neutral-400/80">TOOLS</span>
+              <div>
+                <Link onClick={() => setOpen(false)} href={`/dashboard/${role}/settings`} className={`flex px-5 py-2 items-center gap-3 rounded-full ${pathname === `/dashboard/${role}/settings` ? "bg-blue-700 cursor-default" : "active:bg-neutral-700 hover:bg-neutral-700"}`} ><Icon fontSize={20} icon="mdi:gear-outline" />Account & Settings</Link>
+              </div>
+            </div>
+
+            <div className="flex p-2 border border-white/20 rounded-md gap-2">
+              <div className="w-10 h-10 rounded-full border border-white/40 flex justify-center items-center">
+                <Icon className="w-full h-[80%]" icon="line-md:person-filled" />
+              </div>
+              <div className="flex flex-col">
+                <span className="font-semibold">{session?.user?.name ?? "Owner Name"}</span>
+                <span className="text-white/40 text-sm">{session?.user?.role ?? "Role"}</span>
+              </div>
+            </div>
+
           </div>
           <div>
             <a href="/logout" className="flex px-5 mb-10 py-2 gap-3 items-center rounded-full bg-neutral-700" ><Icon icon="line-md:log-out" />Logout</a>
@@ -86,8 +114,8 @@ export default function Sidebar({ children, session }: { children: ReactNode, se
         </nav>
       </aside>
       <div className="lg:ml-75">
-        <nav className="flex justify-between px-2 border-b-2 border-white/20 mb-2 items-center h-12 w-full lg:hidden">
-          <span onClick={() => setOpen(true)} className="cursor-pointer">
+        <nav className=" flex justify-between px-2 border-b-2 border-white/20 mb-2 items-center h-12 w-full">
+          <span onClick={() => setOpen(true)} className="cursor-pointer lg:hidden">
             <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24">
               <path d="M0 0h24v24H0z" fill="none" />
               <g fill="none" stroke="currentColor" strokeDasharray="16" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5">
@@ -98,7 +126,10 @@ export default function Sidebar({ children, session }: { children: ReactNode, se
             </svg>
           </span>
           <div>
-            <span className="font-semibold">{links.find((item) => `/dashboard/${role}${item.href}` === pathname)?.label}</span>
+            <span className="font-semibold">{paths.find((item) => `/dashboard/${role}${item.href}` === pathname)?.label}</span>
+          </div>
+          <div className="w-8 h-8 flex items-center justify-center rounded-full bg-neutral-800">
+            <Icon fontSize={20} icon="mdi:notifications-none" />
           </div>
         </nav>
         <main className="p-2">

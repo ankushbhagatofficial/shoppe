@@ -3,10 +3,10 @@
 import { AnimatePresence, motion } from "motion/react"
 import Onboarding, { OnboardingProgress } from "@/components/seller/Onboarding"
 import { useOnboardingStore } from "@/store/seller/onboarding"
-import Bank from "@/components/seller/onboarding/Bank"
-import Business from "@/components/seller/onboarding/Business"
-import Verification from "@/components/seller/onboarding/Verification"
-import Setup from "@/components/seller/onboarding/Setup"
+import Bank from "@/components/seller/Bank"
+import Business from "@/components/seller/Business"
+import Verification from "@/components/seller/Verification"
+import Setup from "@/components/seller/Setup"
 import { Icon } from "@iconify/react"
 
 export default function page() {

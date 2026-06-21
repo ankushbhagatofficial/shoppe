@@ -47,8 +47,10 @@ export function OnboardingProgress({ pos = "y" }: { pos?: "x" | "y" }) {
             {pos === "y" &&
               <div className="flex flex-col">
                 <div onClick={() => {
-                  togglePage()
-                  setStep(index)
+                  if (pages[item.id as PageId] || (Object.keys(pages)[index - 1] && Object.keys(pages)[index + 1])) {
+                    togglePage()
+                    setStep(index)
+                  }
                 }} className={`flex cursor-pointer select-none border-3 ${pages[item.id as PageId] ? "bg-green-600/80" : "bg-neutral-700"} ${step === index ? "border-yellow-500" : "border-transparent"} items-center rounded-md p-2 gap-2`}>
                   <div className={`relative flex justify-center items-center w-10 h-10 rounded-full ${pages[item.id as PageId] ? "bg-green-800" : "bg-yellow-500"}`}>
                     <Icon fontSize={25} icon={pages[item.id as PageId] ? "material-symbols:check-rounded" : item.icon} />
@@ -67,7 +69,10 @@ export function OnboardingProgress({ pos = "y" }: { pos?: "x" | "y" }) {
 
             {pos === "x" &&
               <div className="flex items-center">
-                <div onClick={() => setStep(index)} className={`relative flex justify-center items-center w-10 h-10 rounded-full border-3 ${pages[item.id as PageId] ? "bg-green-600" : "bg-neutral-700"} ${step === index ? "border-green-400" : "border-transparent"}`}>
+                <div onClick={() => {
+                  if (pages[item.id as PageId] || (Object.keys(pages)[index - 1] && Object.keys(pages)[index + 1]))
+                    setStep(index)
+                }} className={`relative flex justify-center items-center w-10 h-10 rounded-full border-3 ${pages[item.id as PageId] ? "bg-green-600" : "bg-neutral-700"} ${step === index ? "border-green-400" : "border-transparent"}`}>
                   <Icon fontSize={25} icon={pages[item.id as PageId] ? "material-symbols:check-rounded" : item.icon} />
                 </div>
 

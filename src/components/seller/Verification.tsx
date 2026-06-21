@@ -1,74 +1,40 @@
 import { useOnboardingStore } from "@/store/seller/onboarding";
 import { Icon } from "@iconify/react";
-import { ChangeEvent, SyntheticEvent, useState } from "react";
+import { ChangeEvent, SyntheticEvent } from "react";
 
-type Images = {
-  pan: {
-    name: string,
-    loading: boolean,
-  },
-
-  identity: {
-    name: string,
-    loading: boolean,
-  },
-
-  gst: {
-    name: string,
-    loading: boolean,
-  },
-
-}
+type Image = "panCard" | "identityCard" | "gstCertificate"
 
 export default function Verification() {
-  const { nextStep } = useOnboardingStore()
-  const [images, setImages] = useState<Partial<Images>>({})
+  const { formData, setFormData, nextStep } = useOnboardingStore()
   const content = [
     {
       label: "PAN Card",
-      name: "pan",
+      name: "panCard",
       desc: "Upload clear image of PAN Card"
     },
     {
       label: "Identity",
-      name: "identity",
+      name: "identityCard",
       desc: "Aadhaar Card, Passport or Voter ID"
     },
     {
       label: "GST Certificate (if applicable)",
-      name: "gst",
+      name: "gstCertificate",
       desc: "Upload your GST certificate"
     },
 
   ]
 
   const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const name = e.target.name as keyof Images
+    const name = e.target.name
     const image = e.target.files?.[0]
-    setImages(prev => ({
-      ...prev, [name]: {
-        ...prev[name],
-        loading: true
-      }
-    }))
-    console.log(images);
-
-    if (!image) return
-
-    try {
-      setImages(prev => {
-        return {
-          ...prev,
-          [name]: {
-            name: image.name,
-            loading: false,
-            // src: URL.createObjectURL(image)
-          }
+    if (image)
+      setFormData({
+        [name]: {
+          name: image.name,
+          blob: URL.createObjectURL(image)
         }
       })
-    } catch (error) {
-
-    }
   }
 
   const handleSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
@@ -81,18 +47,18 @@ export default function Verification() {
       <h2 className="text-sm">Upload documents to verify your identity and business.</h2>
       {
         content.map(item => (
-          <div key={item.name} className={`flex justify-between items-center p-5 gap-2 border rounded-md ${images[item.name as keyof Images]?.name && "bg-green-600/20 border-green-400 border-2"}`}>
+          <div key={item.name} className={`flex justify-between items-center p-5 gap-2 border rounded-md ${formData[item.name as Image]?.name && "bg-green-600/20 border-green-400 border-2"}`}>
             <div className="flex gap-5">
               <div className="flex justify-center items-center">
                 <Icon fontSize={30} icon="mdi:id-card-outline" />
               </div>
               <div>
                 <h2 className="font-semibold text-sm">{item.label}</h2>
-                <p className={`text-xs ${images[item.name as keyof Images]?.name && "text-green-400"}`}>
-                  {images[item.name as keyof Images]?.name ?
-                    "Image uploded successfully"
+                <p className={`text-xs ${formData[item.name as Image]?.name && "text-green-400"}`}>
+                  {formData[item.name as Image]?.name ?
+                    formData[item.name as Image].name
                     :
-                   item.desc 
+                    item.desc
                   }
                 </p>
               </div>
@@ -100,7 +66,7 @@ export default function Verification() {
             <label>
               <input onChange={handleOnChange} className="hidden" type="file" name={item.name} accept=".jpg,.jpeg,.webp,.png,.avif" />
               <div className={`p-1.5 px-3 text-sm font-semibold cursor-pointer rounded-sm bg-white/85 text-black`}>
-                {images[item.name as keyof Images]?.name ?
+                {formData[item.name as Image]?.name ?
                   "Replace"
                   :
                   "Upload"

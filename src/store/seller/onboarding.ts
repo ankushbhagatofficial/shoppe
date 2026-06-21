@@ -1,7 +1,7 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 
-type OnboardingStore = {
+export type OnboardingStore = {
   step: number,
   active: boolean,
   pages: {
@@ -18,17 +18,31 @@ type OnboardingStore = {
     accountNumber: string,
     ifscCode: string,
     bankName: string,
-    storeName: string,
+    panCard: {
+      name: string,
+      blob: string,
+    },
+    identityCard: {
+      name: string,
+      blob: string,
+    },
+    gstCertificate: {
+      name: string,
+      blob: string,
+    },
     storeLogo: {
       name: string,
-      src: string,
+      blob: string,
     },
     storeBanner: {
       name: string,
-      src: string,
+      blob: string,
     },
+    storeName: string,
+    storeURL: string,
     storeDescription: string
   },
+  reset: () => void,
   nextStep: () => void,
   prevStep: () => void,
   togglePage: () => void,
@@ -54,15 +68,28 @@ const initiaState = {
     accountNumber: "",
     ifscCode: "",
     bankName: "",
-    storeName: "",
+    panCard: {
+      name: "",
+      blob: "",
+    },
+    identityCard: {
+      name: "",
+      blob: "",
+    },
+    gstCertificate: {
+      name: "",
+      blob: "",
+    },
     storeLogo: {
       name: "",
-      src: ""
+      blob: ""
     },
     storeBanner: {
       name: "",
-      src: ""
+      blob: ""
     },
+    storeName: "",
+    storeURL: "",
     storeDescription: ""
   }
 }
@@ -70,6 +97,8 @@ const initiaState = {
 export const useOnboardingStore = create<OnboardingStore>()(
   persist((set, get) => ({
     ...initiaState,
+
+    reset: () => set(initiaState),
 
     nextStep: () => {
       set(state => ({

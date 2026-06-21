@@ -27,17 +27,17 @@ export default function Bank() {
 
       <div className="flex flex-col gap-2">
         <label className="text-sm font-semibold">Account Number</label>
-        <input onChange={handleOnChange} value={formData.accountNumber} required type="number" className="border-2 rounded-md p-2 text-sm" name="accountNumber" placeholder="Enter account number" />
+        <input maxLength={20} onChange={handleOnChange} value={formData.accountNumber} required type="number" className="border-2 rounded-md p-2 text-sm" name="accountNumber" placeholder="Enter account number" />
       </div>
 
       <div className="flex flex-col gap-2">
         <label className="text-sm font-semibold">IFSC Code</label>
-        <input onChange={handleOnChange} value={formData.ifscCode} required type="text" className="border-2 rounded-md p-2 text-sm" name="ifscCode" placeholder="Enter IFSC code" />
+        <input maxLength={12} onChange={handleOnChange} value={formData.ifscCode} required type="text" className="border-2 rounded-md p-2 text-sm" name="ifscCode" placeholder="Enter IFSC code" />
       </div>
 
       <div className="flex flex-col gap-2">
         <label className="text-sm font-semibold">Bank Name</label>
-        <input onChange={handleOnChange} value={formData.bankName} required type="text" className="border-2 rounded-md p-2 text-sm" name="bankName" placeholder="Enter Bank name" />
+        <input maxLength={50} onChange={handleOnChange} value={formData.bankName} required type="text" className="border-2 rounded-md p-2 text-sm" name="bankName" placeholder="Enter Bank name" />
       </div>
 
       <div className="flex gap-2 items-center bg-green-800 rounded-md p-5">
