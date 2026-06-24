@@ -10,11 +10,11 @@ export default function Footer() {
     {
       title: "Shop",
       links: [
+        "Brands",
         "Categories",
         "Best Sellers",
         "New Arrivals",
         "Offers & Deals",
-        "Brands"
       ],
     },
     {
@@ -33,7 +33,6 @@ export default function Footer() {
       links: [
         "About Us",
         "Careers",
-        "Blog",
         "Privacy Policy",
         "Terms & Conditions"
       ],
@@ -52,8 +51,8 @@ export default function Footer() {
   ]
   return (
     <footer className="border-t border-white/10 mt-5 pt-5 mx-5 md:mx-10">
-      <div className="flex gap-10 justify-between flex-col lg:flex-row">
-        <section className="flex flex-col gap-4 lg:w-60">
+      <div className="flex gap-10 flex-col lg:flex-row">
+        <section className="flex flex-col gap-4 w-fit wrap-break-word">
           <div className="flex items-center">
             <Image src="/logo.webp" alt="logo" width={36} height={36} />
             <div className="hidden min-[350px]:flex">
@@ -101,18 +100,20 @@ export default function Footer() {
 
         <div className="border border-white/10"></div>
 
-        {linkSections.map(section => (
-          <section key={section.title}>
-            <h2 className="font-semibold">{section.title}</h2>
-            <ul className="text-white/50 space-y-2 mt-4">
-              {section.links.map(link => (
-                <li key={link}>
-                  <Link href="/">{link}</Link>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ))}
+        <section className="flex flex-col md:flex-row justify-between w-full gap-10">
+          {linkSections.map(section => (
+            <div key={section.title}>
+              <h2 className="font-semibold">{section.title}</h2>
+              <ul className="text-white/50 space-y-2 mt-4">
+                {section.links.map(link => (
+                  <li key={link}>
+                    <Link className="underline-animate hover:text-white" href="/">{link}</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </section>
       </div>
       <div className="my-5 py-5 border-t border-white/10 text-center text-white/80 text-sm">© 2026 Shoppe. All rights reserved.</div>
     </footer>

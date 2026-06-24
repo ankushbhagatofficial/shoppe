@@ -18,26 +18,33 @@ export type OnboardingStore = {
     accountNumber: string,
     ifscCode: string,
     bankName: string,
-    panCard: {
-      name: string,
-      blob: string,
-    },
-    identityCard: {
-      name: string,
-      blob: string,
-    },
-    gstCertificate: {
-      name: string,
-      blob: string,
-    },
-    storeLogo: {
-      name: string,
-      blob: string,
-    },
-    storeBanner: {
-      name: string,
-      blob: string,
-    },
+    files: Partial<{
+      panCard: {
+        name: string,
+        url: string,
+        status: boolean | string
+      },
+      identityCard: {
+        name: string,
+        url: string,
+        status: boolean | string
+      },
+      gstCertificate: {
+        name: string,
+        url: string,
+        status: boolean | string
+      },
+      storeLogo: {
+        name: string,
+        url: string,
+        status: boolean | string
+      },
+      storeBanner: {
+        name: string,
+        url: string,
+        status: boolean | string
+      },
+    }>,
     storeName: string,
     storeURL: string,
     storeDescription: string
@@ -68,25 +75,32 @@ const initiaState = {
     accountNumber: "",
     ifscCode: "",
     bankName: "",
-    panCard: {
-      name: "",
-      blob: "",
-    },
-    identityCard: {
-      name: "",
-      blob: "",
-    },
-    gstCertificate: {
-      name: "",
-      blob: "",
-    },
-    storeLogo: {
-      name: "",
-      blob: ""
-    },
-    storeBanner: {
-      name: "",
-      blob: ""
+    files: {
+      panCard: {
+        name: "",
+        url: "",
+        status: false
+      },
+      identityCard: {
+        name: "",
+        url: "",
+        status: false
+      },
+      gstCertificate: {
+        name: "",
+        url: "",
+        status: false
+      },
+      storeLogo: {
+        name: "",
+        url: "",
+        status: false
+      },
+      storeBanner: {
+        name: "",
+        url: "",
+        status: false
+      },
     },
     storeName: "",
     storeURL: "",
@@ -124,6 +138,10 @@ export const useOnboardingStore = create<OnboardingStore>()(
     setFormData: (data) => set(state => ({
       formData: {
         ...state.formData, ...data,
+        files: {
+          ...state.formData.files,
+          ...data.files,
+        }
       }
     }))
 

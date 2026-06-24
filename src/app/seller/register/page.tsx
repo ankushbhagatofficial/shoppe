@@ -93,8 +93,8 @@ function Register({ setStep }: { setStep?: Function }) {
 
     const result = await sellerAction(formData)
     if (!result?.success) {
-      // setFieldErrors(result?.errors)
-      // setErrorMessage(result?.message)
+      setFieldErrors(result?.errors)
+      setErrorMessage(result?.message)
     }
 
     setLoading(false)

@@ -1,5 +1,6 @@
 "use server"
 
+import { signIn } from "@/lib/auth"
 import { headers } from "next/headers";
 import { redirect } from "next/navigation"
 import axios from "axios"
@@ -82,6 +83,16 @@ export async function sellerAction(formData: Seller): Promise<{ success?: boolea
     }
   }
 
-  if (res?.status === 200)
-    redirect("/seller/onboarding")
+  if (res?.status === 200) {
+    const data = res.data
+
+    const seller = {
+      id: data.seller._id.toString(),
+      name: data.seller.name,
+      email: data.seller.email,
+      role: data.seller.role,
+    }
+
+    await signIn("credentials", { ...seller, redirectTo: "/seller/onboarding" })
+  }
 }

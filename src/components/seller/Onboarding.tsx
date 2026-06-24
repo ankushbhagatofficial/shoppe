@@ -47,7 +47,9 @@ export function OnboardingProgress({ pos = "y" }: { pos?: "x" | "y" }) {
             {pos === "y" &&
               <div className="flex flex-col">
                 <div onClick={() => {
-                  if (pages[item.id as PageId] || (Object.keys(pages)[index - 1] && Object.keys(pages)[index + 1])) {
+                  const before = Object.values(pages)[index - 1]
+
+                  if (pages[item.id as PageId] || before) {
                     togglePage()
                     setStep(index)
                   }
@@ -70,7 +72,9 @@ export function OnboardingProgress({ pos = "y" }: { pos?: "x" | "y" }) {
             {pos === "x" &&
               <div className="flex items-center">
                 <div onClick={() => {
-                  if (pages[item.id as PageId] || (Object.keys(pages)[index - 1] && Object.keys(pages)[index + 1]))
+                  const before = Object.values(pages)[index - 1]
+
+                  if (pages[item.id as PageId] || before)
                     setStep(index)
                 }} className={`relative flex justify-center items-center w-10 h-10 rounded-full border-3 ${pages[item.id as PageId] ? "bg-green-600" : "bg-neutral-700"} ${step === index ? "border-green-400" : "border-transparent"}`}>
                   <Icon fontSize={25} icon={pages[item.id as PageId] ? "material-symbols:check-rounded" : item.icon} />
