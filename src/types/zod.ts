@@ -6,11 +6,3 @@ declare module "zod" {
   }
 }
 
-z.ZodType.prototype.priority = function() {
-  const self = this;
-  return z.any().superRefine((val, ctx) => {
-    const result = self.safeParse(val);
-    if (!result.success) ctx.addIssue(result.error.issues[0]);
-  });
-};
-

@@ -147,7 +147,7 @@ export default function Setup() {
 
       const result = await onboardingAction(formData)
       if (result?.success) {
-        reset()
+        // reset()
         nextStep()
         redirect("/dashboard/seller")
       }

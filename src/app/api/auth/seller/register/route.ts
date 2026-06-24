@@ -18,7 +18,7 @@ export async function POST(req: Request) {
     const result = sellerSchema.safeParse(body)
 
     if (!result.success) {
-      const message = result.error.flatten()
+      const message = result.error.flatten().fieldErrors
       return Response.json({
         message
       }, { status: 400 })

@@ -1,11 +1,5 @@
 import { z } from "zod"
 
-declare module "zod" {
-  interface ZodType {
-    priority(): z.ZodAny;
-  }
-}
-
 z.ZodType.prototype.priority = function() {
   const self = this;
   return z.any().superRefine((val, ctx) => {

@@ -72,7 +72,7 @@ export async function sellerAction(formData: Seller): Promise<{ success?: boolea
       if (error?.response?.status === 400) {
         return {
           success: false,
-          errors: error?.response?.data?.message.fieldErrors,
+          errors: error?.response?.data?.message,
         }
       } else {
         return {

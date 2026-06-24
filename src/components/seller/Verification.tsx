@@ -152,7 +152,7 @@ export default function Verification() {
                       {typeof file?.status === "string" ?
                         <>
                           <Icon className="text-red-400" icon="material-symbols:cancel-rounded" />
-                          <p className="text-red-400">{file.status}</p>
+                          <p className="text-red-400 text-xs">{file.status}</p>
                         </>
                         :
                         <p className={`${file?.status === true && "text-green-400"} w-fit line-clamp-1`}>
