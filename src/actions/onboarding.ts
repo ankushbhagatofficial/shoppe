@@ -13,13 +13,11 @@ export async function onboardingUploadAction(file: { name: string, src: string }
   try {
     const result = await uploadOnCloudinary(file?.src, `sellers/${user?.id}`)
     return result?.secure_url
-  } catch (error) {
-    if (error instanceof Error) {
-      if (error.code === "ENOENT") {
-        throw new Error("failed to upload, file not found.")
-      } else {
-        throw new Error("failed to upload file.")
-      }
+  } catch (error: any) {
+    if (error.code === "ENOENT") {
+      throw new Error("failed to upload, file not found.")
+    } else {
+      throw new Error("failed to upload file.")
     }
   }
 

@@ -15,7 +15,7 @@ export const uploadOnCloudinary = async (base64: string, path: string) => {
     },
     )
 
-  } catch (error) {
+  } catch (error: any) {
     if (error instanceof Error)
       throw error
     else
