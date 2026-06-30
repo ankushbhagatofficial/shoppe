@@ -59,6 +59,7 @@ const sellerSchema = new Schema({
 
   documents: {
     panCard: {
+      publicId: String,
       url: String,
       verified: {
         type: Boolean,
@@ -67,6 +68,7 @@ const sellerSchema = new Schema({
     },
 
     identityCard: {
+      publicId: String,
       url: String,
       verified: {
         type: Boolean,
@@ -75,6 +77,7 @@ const sellerSchema = new Schema({
     },
 
     gstCertificate: {
+      publicId: String,
       url: String,
       verified: {
         type: Boolean,
@@ -98,8 +101,14 @@ const sellerSchema = new Schema({
       required: false
     },
     name: String,
-    logo: String,
-    banner: String,
+    logo: {
+      url: String,
+      publicId: String
+    },
+    banner: {
+      url: String,
+      publicId: String
+    },
     description: String
   },
 

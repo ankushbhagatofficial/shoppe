@@ -4,33 +4,20 @@ import Seller from "@/lib/model/seller.model";
 import connectDB from "@/lib/mongodb";
 import { OnboardingStore } from "@/store/seller/onboarding";
 import { auth } from "@/lib/auth";
-import { uploadOnCloudinary } from "@/lib/cloudinary";
+import { onboardingSchema } from "@/lib/zod/seller/onboarding.schema";
 
-export async function onboardingUploadAction(file: { name: string, src: string }): Promise<string | undefined> {
+export async function checkStoreURL(storeURL: string): Promise<boolean | string | void> {
   const session = await auth()
   const user = session?.user
 
-  try {
-    const result = await uploadOnCloudinary(file?.src, `sellers/${user?.id}`)
-    return result?.secure_url
-  } catch (error: any) {
-    if (error.code === "ENOENT") {
-      throw new Error("failed to upload, file not found.")
-    } else {
-      throw new Error("failed to upload file.")
-    }
-  }
-
-}
-
-export async function checkStoreURL(storeURL: string): Promise<boolean | string | void> {
   if (!storeURL) return
   if (storeURL.length > 30) return
   const result = await Seller.exists({ "store.url": storeURL })
-  return !!result
+
+  return user?.id !== result?._id.toString()
 }
 
-export async function onboardingAction(formData: OnboardingStore["formData"]): Promise<{ success: boolean } | undefined> {
+export async function onboardingAction(formData: OnboardingStore["formData"]): Promise<{ success: boolean, errors?: any } | undefined> {
   await connectDB()
   const session = await auth()
   const user = session?.user
@@ -46,12 +33,45 @@ export async function onboardingAction(formData: OnboardingStore["formData"]): P
     storeName,
     storeURL,
     storeDescription,
-    files
   } = formData
 
+  const result = onboardingSchema.safeParse(formData)
+  let errors: Record<string, string | string[]> = {}
+
+  if (!result.success) {
+    errors = result.error.flatten().fieldErrors
+  }
+
+  const files = {
+    documents: {
+      panCard: "PAN Card is missing",
+      identityCard: "Identity Card is missing",
+      gstCertificate: "GST Certificate is missing",
+    },
+    store: {
+      banner: "Store Banner is missing",
+      logo: "Store Logo is missing",
+    }
+  }
 
   if (user?.role === "seller") {
-    const seller = await Seller.findByIdAndUpdate(user?.id, {
+    const seller = await Seller.findById(user?.id)
+
+    for (const [field, fieldVal] of Object.entries(files)) {
+      for (const [key, val] of Object.entries(fieldVal)) {
+        if (!seller[field][key].url) {
+          errors[key] = val
+        }
+      }
+    }
+
+    if (Object.keys(errors).length > 0)
+      return {
+        success: false,
+        errors
+      }
+
+    await Seller.findByIdAndUpdate(user?.id, {
       business: {
         businessType,
         businessAddress,
@@ -63,18 +83,12 @@ export async function onboardingAction(formData: OnboardingStore["formData"]): P
         ifscCode,
         bankName,
       },
-      documents: {
-        panCard: { url: files.panCard?.url },
-        identityCard: { url: files.identityCard?.url },
-        gstCertificate: { url: files.gstCertificate?.url },
-      },
-      store: {
-        name: storeName,
-        url: storeURL,
-        description: storeDescription,
-        logo: files.storeLogo?.url,
-        banner: files.storeBanner?.url,
-      },
+      "store.name": storeName,
+      "store.url": storeURL.toLowerCase()
+        .replace(/[^a-z0-9-]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-"),
+      "store.description": storeDescription,
       onboardingComplete: true,
     })
   }

@@ -1,23 +1,23 @@
-import { checkStoreURL, onboardingAction, onboardingUploadAction } from "@/actions/onboarding";
-import { OnboardingStore, useOnboardingStore } from "@/store/seller/onboarding";
+import { checkStoreURL, onboardingAction } from "@/actions/onboarding";
+import { useOnboardingStore } from "@/store/seller/onboarding";
 import { Icon } from "@iconify/react";
 import { ChangeEvent, SyntheticEvent, useState } from "react";
 import { redirect } from "next/navigation"
 import { toBase64 } from "@/utils/toBase64";
+import axios from "axios";
 
-type Image = "storeLogo" | "storeBanner"
+type Image = "logo" | "banner"
 
 export default function Setup() {
-  const { reset, nextStep, formData, setFormData, togglePage } = useOnboardingStore()
+  const { reset, resetErrors, errors, setErrors, formData, setFormData } = useOnboardingStore()
   const [image, setImage] = useState({
-    storeLogo: formData.files.storeLogo?.url,
-    storeBanner: formData.files.storeBanner?.url
+    logo: formData.files.logo?.url,
+    banner: formData.files.banner?.url
   })
-  const [error, setError] = useState<Record<string, string>>()
   const [loading, setLoading] = useState({
     submit: false,
-    storeLogo: false,
-    storeBanner: false,
+    logo: false,
+    banner: false,
   })
 
   const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -26,9 +26,9 @@ export default function Setup() {
     if (image) {
       const file = await toBase64(image)
 
-      setError(prev => ({
-        ...prev, [name]: ""
-      }))
+      setErrors({
+        [name]: ""
+      })
 
       setLoading(prev => ({
         ...prev,
@@ -51,24 +51,33 @@ export default function Setup() {
         }
       })
 
+
+      const data = new FormData()
+      data.append("image", image)
+      data.append("type", name)
+
       try {
-        const url = await onboardingUploadAction({ name: image.name, src: file })
-        setFormData({
-          files: {
-            [name]: {
-              ...useOnboardingStore.getState().formData.files[name as Image],
-              status: true,
-              url,
-            }
-          }
-        })
-      } catch (error) {
-        if (error instanceof Error)
+        const res = await axios.post("/api/auth/seller/upload", data)
+        if (res.status === 200) {
+          const { url } = res.data
+
           setFormData({
             files: {
               [name]: {
                 ...useOnboardingStore.getState().formData.files[name as Image],
-                status: error.message
+                status: true,
+                url,
+              }
+            }
+          })
+        }
+      } catch (error) {
+        if (axios.isAxiosError(error))
+          setFormData({
+            files: {
+              [name]: {
+                ...useOnboardingStore.getState().formData.files[name as Image],
+                status: error.response?.data?.message
               }
             }
           })
@@ -105,78 +114,58 @@ export default function Setup() {
       .replace(/\s+/g, "-")
       .replace(/-+/g, "-")
 
-
     setFormData({
       [e.target.name]: url
     })
-
-    const result = await checkStoreURL(url)
-    setError(prev => ({
-      ...prev, storeURL: result ? "already taken, try diffrent!" : ""
-    }))
-
-  }
-
-  const validateForm = () => {
-    const errors: {
-      storeLogo?: string,
-      storeBanner?: string,
-    } = {}
-
-    if (!formData.files.storeLogo?.url) {
-      errors.storeLogo = "Store Logo is missing"
-    }
-    if (!formData.files.storeBanner?.url) {
-      errors.storeBanner = "Store Banner is missing"
-    }
-
-    return errors
-
   }
 
   const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault()
-
-    const result = validateForm()
-    setError(result)
-
-    if (Object.keys(result).length === 0) {
-      setLoading(prev => ({
-        ...prev, submit: true
-      }))
-
-      const result = await onboardingAction(formData)
-      if (result?.success) {
-        // reset()
-        nextStep()
-        redirect("/dashboard/seller")
-      }
-
-    }
+    resetErrors()
 
     setLoading(prev => ({
-      ...prev, submit: false
+      ...prev, submit: true
     }))
+
+    const result = await onboardingAction(formData)
+    if (result?.success) {
+      reset()
+      redirect("/dashboard/seller")
+    } else {
+      setLoading(prev => ({
+        ...prev, submit: false
+      }))
+      setErrors(result?.errors)
+    }
+
+
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+    <form onSubmit={handleSubmit} className="relative flex flex-col gap-5">
+      {loading?.submit && <div className="absolute z-50 left-1/2 top-1/2 -translate-1/2 w-[105%] h-[105%] backdrop-blur-md">
+        <div className="p-5 flex flex-col justify-center items-center gap-10 h-full border rounded-xl">
+          <h1 className="text-xl font-bold">Submitting your application</h1>
+          <Icon fontSize={50} className="text-blue-500" icon="svg-spinners:270-ring-with-bg" />
+        </div>
+      </div>
+      }
       <h2 className="text-sm">Customise your store profile.</h2>
 
       <div className="grid md:grid-cols-[1fr_1.5fr] gap-5">
         <div className="flex flex-col gap-2">
           <h2 className="font-semibold">Store Logo</h2>
           <label className="cursor-pointer">
-            <input onChange={handleImageChange} className="hidden" accept=".jpg,.jpeg,.webp,.png,.avif" type="file" name="storeLogo" />
+            <input onChange={handleImageChange} className="hidden" accept=".jpg,.jpeg,.webp,.png,.avif" type="file" name="logo" />
             <div className="relative h-40 rounded-md border-dashed border-2 border-white/60 flex flex-col justify-center items-center overflow-hidden">
               {
-                loading.storeLogo &&
+                loading.logo &&
                 <div className="z-12 absolute flex justify-center items-center h-full w-full backdrop-blur-xs">
                   <Icon className="z-10 absolute" fontSize={50} icon="svg-spinners:270-ring" />
                 </div>
               }
-              {image.storeLogo ?
-                <img className="object-contain h-full w-full p-2" src={image.storeLogo} alt="" />
+              {image.logo ?
+                <img className="object-contain h-full w-full p-2" src={image.logo} alt="" />
                 :
                 <div className="flex flex-col justify-center items-center">
                   <Icon fontSize={25} icon="mdi:cloud-upload-outline" />
@@ -186,24 +175,24 @@ export default function Setup() {
             </div>
           </label>
 
-          {error?.storeLogo &&
+          {errors?.logo &&
             <div className="flex text-xs gap-1.5">
               <Icon className="text-red-400" icon="material-symbols:cancel-rounded" />
-              <p className="text-red-400">{error?.storeLogo}</p>
+              <p className="text-red-400">{errors?.logo}</p>
             </div>
           }
 
-          {formData.files.storeLogo?.status === true &&
+          {formData.files.logo?.status === true &&
             <div className="flex text-sm items-center gap-1.5">
               <Icon className="text-green-400" icon="material-symbols:check-circle-outline-rounded" />
               <p>Logo uploaded successfully.</p>
             </div>
           }
 
-          {typeof formData.files.storeLogo?.status === "string" &&
+          {typeof formData.files.logo?.status === "string" &&
             <div className="flex text-sm items-center gap-1.5">
               <Icon className="text-red-400" icon="material-symbols:cancel-rounded" />
-              <p className="text-red-400">{formData.files.storeLogo?.status}</p>
+              <p className="text-red-400">{formData.files.logo?.status}</p>
             </div>
           }
 
@@ -212,18 +201,18 @@ export default function Setup() {
         <div className="flex flex-col gap-2">
           <h2 className="font-semibold">Store Banner</h2>
           <label className="cursor-pointer">
-            <input onChange={handleImageChange} className="hidden" accept=".jpg,.jpeg,.webp,.png,.avif" type="file" name="storeBanner" />
+            <input onChange={handleImageChange} className="hidden" accept=".jpg,.jpeg,.webp,.png,.avif" type="file" name="banner" />
             <div className="relative h-40 rounded-md border-dashed border-2 border-white/60 flex flex-col justify-center items-center overflow-hidden">
               {
-                loading.storeBanner &&
+                loading.banner &&
                 <div className="z-12 absolute flex justify-center items-center h-full w-full backdrop-blur-xs">
                   <Icon className="z-10 absolute" fontSize={50} icon="svg-spinners:270-ring" />
                 </div>
               }
-              {image.storeBanner
+              {image.banner
                 ?
                 <img className="object-contain h-full w-full p-2"
-                  src={image.storeBanner} alt="" />
+                  src={image.banner} alt="" />
                 :
                 <div className="flex flex-col justify-center items-center">
                   <Icon fontSize={25} icon="mdi:cloud-upload-outline" />
@@ -233,24 +222,24 @@ export default function Setup() {
             </div>
           </label>
 
-          {error?.storeBanner &&
+          {errors?.banner &&
             <div className="flex text-xs gap-1.5">
               <Icon className="text-red-400" icon="material-symbols:cancel-rounded" />
-              <p className="text-red-400">{error?.storeBanner}</p>
+              <p className="text-red-400">{errors?.banner}</p>
             </div>
           }
 
-          {formData.files.storeBanner?.status === true &&
+          {formData.files.banner?.status === true &&
             <div className="flex text-sm items-center gap-1.5">
               <Icon className="text-green-400" icon="material-symbols:check-circle-outline-rounded" />
               <p>Banner uploaded successfully.</p>
             </div>
           }
 
-          {typeof formData.files.storeBanner?.status === "string" &&
+          {typeof formData.files.banner?.status === "string" &&
             <div className="flex text-sm items-center gap-1.5">
               <Icon className="text-red-400" icon="material-symbols:cancel-rounded" />
-              <p className="text-red-400">{formData.files.storeBanner?.status}</p>
+              <p className="text-red-400">{formData.files.banner?.status}</p>
             </div>
           }
 
@@ -265,7 +254,7 @@ export default function Setup() {
 
       <div className="flex flex-col gap-2">
         <label className="flex items-center justify-between text-sm font-semibold">Store URL
-          {error?.storeURL && <p className="text-xs text-red-400">{error?.storeURL}</p>}
+          {errors?.storeURL && <p className="text-xs text-red-400">{errors?.storeURL}</p>}
 
         </label>
         <div className="flex border-2 rounded-sm items-center text-sm pl-2">

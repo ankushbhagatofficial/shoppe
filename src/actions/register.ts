@@ -1,21 +1,9 @@
 "use server"
 
 import { signIn } from "@/lib/auth"
-import { headers } from "next/headers";
 import { redirect } from "next/navigation"
+import { getOrigin } from "@/utils/origin"
 import axios from "axios"
-
-async function getUrl() {
-
-  const headersList = await headers();
-
-  const host = headersList.get("host");
-  const protocol = process.env.NODE_ENV === "development"
-    ? "http"
-    : "https";
-
-  return `${protocol}://${host}`;
-}
 
 type User = {
   name: string,
@@ -33,7 +21,7 @@ type Seller = {
 }
 
 export async function registerAction(formData: User): Promise<{ success?: boolean, message?: string, errors?: any } | undefined> {
-  const url = await getUrl()
+  const url = await getOrigin()
   let res
 
   try {
@@ -61,7 +49,7 @@ export async function registerAction(formData: User): Promise<{ success?: boolea
 }
 
 export async function sellerAction(formData: Seller): Promise<{ success?: boolean, message?: string, errors?: any } | undefined> {
-  const url = await getUrl()
+  const url = await getOrigin()
 
   let res
 

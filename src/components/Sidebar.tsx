@@ -5,12 +5,22 @@ import Link from "next/link";
 import { Icon } from "@iconify/react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import axios from "axios";
 
 export default function Sidebar({ children, session }: { children: ReactNode, session: any }) {
+  const [avatar, setAvatar] = useState("")
   const [open, setOpen] = useState(false)
   const navRef = useRef<HTMLElement>(null)
   const pathname = usePathname()
   const role = pathname.split("/")[2]
+
+  useEffect(() => {
+    const fetchAvatar = async () => {
+      const res = await axios.get("/api/get/avatar")
+      setAvatar(res.data?.avatar)
+    }
+    fetchAvatar()
+  }, [])
 
   const links = [
     {
@@ -69,8 +79,8 @@ export default function Sidebar({ children, session }: { children: ReactNode, se
 
   return (
     <div>
-      <div className={`fixed -z-10 transition-all duration-400 ${open && "bg-white/15 backdrop-blur-xs z-1"} w-full h-dvh`}></div>
-      <aside className={`${open ? "left-0" : "-left-full"} select-none z-10 transition-all duration-400 w-75 h-dvh bg-neutral-800 fixed lg:left-0`}>
+      <div className={`fixed -z-10 transition-all duration-400 ${open && "bg-white/15 backdrop-blur-xs z-30"} w-full h-dvh`}></div>
+      <aside className={`${open ? "left-0" : "-left-full"} select-none z-50 transition-all duration-400 w-75 h-dvh bg-neutral-800 fixed lg:left-0`}>
         <nav ref={navRef} className="flex flex-col p-5 justify-between h-dvh font-poppins overflow-y-auto gap-5">
           <div className="flex flex-col gap-5 font-poppins">
             <Link href="/" className="flex items-center px-4 self-start">
@@ -98,8 +108,12 @@ export default function Sidebar({ children, session }: { children: ReactNode, se
             </div>
 
             <div className="flex p-2 border border-white/20 rounded-md gap-2">
-              <div className="w-10 h-10 rounded-full border border-white/40 flex justify-center items-center">
-                <Icon className="w-full h-[80%]" icon="line-md:person-filled" />
+              <div className="w-10 h-10 rounded-full border border-white/40 flex justify-center items-center overflow-hidden">
+                {avatar ?
+                  <img className="h-[90%]" src={avatar} alt="" />
+                  :
+                  <Icon className="w-full h-[80%]" icon="line-md:person-filled" />
+                }
               </div>
               <div className="flex flex-col">
                 <span className="font-semibold">{session?.user?.name ?? "Owner Name"}</span>

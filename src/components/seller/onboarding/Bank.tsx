@@ -1,15 +1,11 @@
 import { bankSchema } from "@/lib/zod/seller/onboarding.schema";
 import { useOnboardingStore } from "@/store/seller/onboarding";
 import { Icon } from "@iconify/react";
-import { ChangeEvent, SyntheticEvent, useState } from "react";
-import { motion } from "motion/react";
-import Tooltip from "../ui/tooltip";
+import { ChangeEvent, SyntheticEvent } from "react";
+import Tooltip from "@/components/ui/tooltip";
 
 export default function Bank() {
-  const { nextStep, formData, setFormData, setPage } = useOnboardingStore()
-  const [error, setError] = useState<Record<string, string[]>>({})
-
-  // setError({})
+  const { nextStep, errors, setErrors, formData, setFormData, setPage } = useOnboardingStore()
 
   const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -25,7 +21,7 @@ export default function Bank() {
     e.preventDefault()
     const result = bankSchema.safeParse(formData)
     const status = result.success
-    setError(result.error?.flatten().fieldErrors ?? {})
+    setErrors(result.error?.flatten().fieldErrors ?? {})
     if (status)
       nextStep()
     else
@@ -40,8 +36,8 @@ export default function Bank() {
         <label className="text-sm font-semibold">Account Holder Name</label>
         <div className="relative">
           <input onChange={handleOnChange} value={formData.accountHolder} maxLength={50} className="w-full border-2 rounded-sm p-2 text-sm" type="text" name="accountHolder" placeholder="Enter account holer name" />
-          {error?.accountHolder &&
-            <Tooltip className="max-w-60 after:border-red-500 bg-red-500" message={error?.accountHolder[0]} />
+          {errors?.accountHolder &&
+            <Tooltip className="max-w-60 after:border-red-500 bg-red-500" message={errors?.accountHolder[0]} />
           }
         </div>
       </div>
@@ -50,8 +46,8 @@ export default function Bank() {
         <label className="text-sm font-semibold">Account Number</label>
         <div className="relative">
           <input maxLength={18} onChange={handleOnChange} value={formData.accountNumber} required type="text" className="w-full border-2 no-spinner rounded-md p-2 text-sm" name="accountNumber" placeholder="Enter account number" />
-          {error?.accountNumber &&
-            <Tooltip className="max-w-60 after:border-red-500 bg-red-500" message={error?.accountNumber[0]} />
+          {errors?.accountNumber &&
+            <Tooltip className="max-w-60 after:border-red-500 bg-red-500" message={errors?.accountNumber[0]} />
           }
         </div>
       </div>
@@ -60,8 +56,8 @@ export default function Bank() {
         <label className="text-sm font-semibold">IFSC Code</label>
         <div className="relative">
           <input onChange={handleOnChange} value={formData.ifscCode} required type="text" className="w-full border-2 rounded-md p-2 text-sm" name="ifscCode" placeholder="Enter IFSC code" />
-          {error?.ifscCode &&
-            <Tooltip className="max-w-60 after:border-red-500 bg-red-500" message={error?.ifscCode[0]} />
+          {errors?.ifscCode &&
+            <Tooltip className="max-w-60 after:border-red-500 bg-red-500" message={errors?.ifscCode[0]} />
 
           }
         </div>
@@ -71,8 +67,8 @@ export default function Bank() {
         <label className="text-sm font-semibold">Bank Name</label>
         <div className="relative">
           <input maxLength={50} onChange={handleOnChange} value={formData.bankName} required type="text" className="w-full border-2 rounded-md p-2 text-sm" name="bankName" placeholder="Enter Bank name" />
-          {error?.bankName &&
-            <Tooltip className="max-w-60 after:border-red-500 bg-red-500" message={error?.bankName[0]} />
+          {errors?.bankName &&
+            <Tooltip className="max-w-60 after:border-red-500 bg-red-500" message={errors?.bankName[0]} />
           }
         </div>
       </div>

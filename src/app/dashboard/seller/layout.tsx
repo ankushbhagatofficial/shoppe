@@ -19,10 +19,8 @@ export default async function AdminLayout({ children }: { children: ReactNode })
 
   if (user?.role === "seller") {
     const seller = await Seller.findById(user?.id)
-    // console.log(seller);
-    if (!seller.onboardingComplete) {
-      redirect("/seller/onboarding")
-    }
+    if (!seller) redirect("/logout")
+    if (!seller.onboardingComplete) redirect("/seller/onboarding")
   } else {
     redirect("/seller/login")
   }

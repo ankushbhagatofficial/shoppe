@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { Icon } from "@iconify/react"
-import { AnimatePresence, motion } from "motion/react"
 import Link from "next/link";
 
 export default function Footer() {
@@ -10,41 +9,40 @@ export default function Footer() {
     {
       title: "Shop",
       links: [
-        "Brands",
-        "Categories",
-        "Best Sellers",
-        "New Arrivals",
-        "Offers & Deals",
+        { label: "Brands", href: "/products/brands" },
+        { label: "Categories", href: "/products/categories" },
+        { label: "Best Sellers", href: "/products/best-sellers" },
+        { label: "New Arrivals", href: "/products/new" },
+        { label: "Offers & Deals", href: "/products/offers&deals" },
       ],
     },
     {
       title: "Customer Service",
       links: [
-        "Help Center",
-        "Contact Us",
-        "Shipping Policy",
-        "Returns & Refunds",
-        "Track Your Orders"
+        { label: "Help Center", href: "/help" },
+        { label: "Contact Us", href: "/contact" },
+        { label: "Shipping Policy", href: "/shipping-policy" },
+        { label: "Returns & Refunds", href: "/orders/returns/refunds" },
+        { label: "Track Your Orders", href: "/orders" }
       ],
     },
 
     {
       title: "Company",
       links: [
-        "About Us",
-        "Careers",
-        "Privacy Policy",
-        "Terms & Conditions"
+        { label: "About Us", href: "/about" },
+        { label: "Privacy Policy", href: "/privacy-policy" },
+        { label: "Terms & Conditions", href: "/terms-conditions" }
       ],
     },
 
     {
       title: "Seller",
       links: [
-        "Become a Seller",
-        "Seller Dashboard",
-        "Seller Support",
-        "Fee & Commission"
+        { label: "Become a Seller", href: "/seller/register" },
+        { label: "Seller Dashboard", href: "/dashboard/seller" },
+        { label: "Seller Support", href: "/seller/support" },
+        { label: "Fee & Commission", href: "/commission" }
       ],
     },
 
@@ -106,8 +104,8 @@ export default function Footer() {
               <h2 className="font-semibold">{section.title}</h2>
               <ul className="text-white/50 space-y-2 mt-4">
                 {section.links.map(link => (
-                  <li key={link}>
-                    <Link className="underline-animate hover:text-white" href="/">{link}</Link>
+                  <li key={link.label}>
+                    <Link className="underline-animate hover:text-white" href={link.href}>{link.label}</Link>
                   </li>
                 ))}
               </ul>

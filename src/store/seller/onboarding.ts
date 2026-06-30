@@ -10,6 +10,7 @@ export type OnboardingStore = {
     verification: boolean,
     setup: boolean
   },
+  errors: Record<string, string[] | string>,
   formData: {
     businessType: string,
     businessAddress: string,
@@ -34,12 +35,12 @@ export type OnboardingStore = {
         url: string,
         status: boolean | string
       },
-      storeLogo: {
+      logo: {
         name: string,
         url: string,
         status: boolean | string
       },
-      storeBanner: {
+      banner: {
         name: string,
         url: string,
         status: boolean | string
@@ -53,8 +54,10 @@ export type OnboardingStore = {
   nextStep: () => void,
   prevStep: () => void,
   togglePage: () => void,
+  resetErrors: () => void,
   setStep: (step: number) => void,
   setPage: (page: Partial<OnboardingStore["pages"]>) => void,
+  setErrors: (errors: OnboardingStore["errors"]) => void,
   setFormData: (form: Partial<OnboardingStore["formData"]>) => void
 }
 
@@ -67,6 +70,7 @@ const initiaState = {
     verification: false,
     setup: false
   },
+  errors: {},
   formData: {
     businessType: "individual",
     businessAddress: "",
@@ -89,14 +93,15 @@ const initiaState = {
       gstCertificate: {
         name: "",
         url: "",
+        id: "",
         status: false
       },
-      storeLogo: {
+      logo: {
         name: "",
         url: "",
         status: false
       },
-      storeBanner: {
+      banner: {
         name: "",
         url: "",
         status: false
@@ -134,6 +139,16 @@ export const useOnboardingStore = create<OnboardingStore>()(
     setPage: (pages) => set(state => ({
       pages: { ...state.pages, ...pages }
     })),
+
+    setErrors: (errors) => set(state => ({
+      errors: {
+        ...state.errors, ...errors
+      }
+    })),
+
+    resetErrors: () => set({
+      errors: {}
+    }),
 
     setFormData: (data) => set(state => ({
       formData: {

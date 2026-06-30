@@ -1,9 +1,10 @@
+import Tooltip from "@/components/ui/tooltip";
 import { useOnboardingStore } from "@/store/seller/onboarding";
 import { Icon } from "@iconify/react";
-import { ChangeEvent, SyntheticEvent, useState } from "react";
+import { ChangeEvent, SyntheticEvent } from "react";
 
 export default function Business() {
-  const { nextStep, formData, setFormData } = useOnboardingStore()
+  const { nextStep, errors, formData, setFormData } = useOnboardingStore()
 
   const handleChar = (e: SyntheticEvent<HTMLTextAreaElement>) => {
     const target = e.currentTarget
@@ -50,13 +51,21 @@ export default function Business() {
 
       <div className="flex flex-col gap-2">
         <label className="text-sm font-semibold">GST Number (Optional)</label>
-        <input onChange={handleOnChange} maxLength={15} value={formData.gstNumber} className="border-2 rounded-sm p-2 text-sm" type="text" name="gstNumber" placeholder="Enter GST Number" />
+        <div className="relative">
+          <input onChange={handleOnChange} maxLength={15} value={formData.gstNumber} className="w-full border-2 rounded-sm p-2 text-sm" type="text" name="gstNumber" placeholder="Enter GST Number" />
+          {errors?.gstNumber &&
+            <Tooltip className="max-w-60 after:border-red-500 bg-red-500" message={errors?.gstNumber[0]} />
+          }
+        </div>
       </div>
       <div className="flex flex-col gap-2">
         <label className="text-sm font-semibold">Business Address</label>
         <div className="relative">
-          <textarea required onChange={handleChar} value={formData.businessAddress} maxLength={200} rows={6} className="w-full min-h-20 border-2 rounded-md p-2 text-sm" name="businessAddress" placeholder="Enter your complete business address" />
           <p className="char text-sm absolute select-none cursor-default bottom-4 right-4">{formData.businessAddress?.length ?? 0}/200</p>
+          <textarea required onChange={handleChar} value={formData.businessAddress} maxLength={200} rows={6} className="w-full min-h-20 border-2 rounded-md p-2 text-sm" name="businessAddress" placeholder="Enter your complete business address" />
+          {errors?.businessAddress &&
+            <Tooltip className="max-w-60 after:border-red-500 bg-red-500" message={errors?.businessAddress[0]} />
+          }
         </div>
       </div>
 

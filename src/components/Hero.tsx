@@ -54,7 +54,7 @@ export default function Hero() {
               </div>
             </div>
             <motion.div initial={{ x: 100, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.2 }} className="overflow-hidden w-full h-full select-none">
-              <Image className="relative -top-25 md:top-0 object-contain h-full w-full scale-120 -rotate-7 left-20 md:left-40" src={pixel10a} alt="" />
+              <Image loading="eager" className="relative -top-25 md:top-0 object-contain h-full w-full scale-120 -rotate-7 left-20 md:left-40" src={pixel10a} alt="logo" />
             </motion.div>
           </div>
         </div>
@@ -70,7 +70,7 @@ export default function Hero() {
               </motion.div>
             </div>
             <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.2, duration: 0.2 }} className="h-full p-5 select-none">
-              <Image className="object-contain h-full w-full" src={appleairpods} alt="" />
+              <Image loading="eager" className="object-contain h-full w-full" src={appleairpods} alt="" />
             </motion.div>
           </div>
           <div className="bg-neutral-800 rounded-2xl flex justify-between">

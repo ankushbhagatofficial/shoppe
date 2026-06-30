@@ -1,7 +1,7 @@
-import { onboardingUploadAction } from "@/actions/onboarding";
 import { useOnboardingStore } from "@/store/seller/onboarding";
 import { toBase64 } from "@/utils/toBase64";
 import { Icon } from "@iconify/react";
+import axios from "axios";
 import { ChangeEvent, SyntheticEvent, useState } from "react";
 
 type Image = "panCard" | "identityCard" | "gstCertificate"
@@ -58,24 +58,32 @@ export default function Verification() {
         }
       })
 
+      const data = new FormData()
+      data.append("image", image)
+      data.append("type", name)
+
       try {
-        const url = await onboardingUploadAction({ name: image.name, src: file })
-        setFormData({
-          files: {
-            [name]: {
-              ...useOnboardingStore.getState().formData.files[name as Image],
-              status: true,
-              url,
-            }
-          }
-        })
-      } catch (error) {
-        if (error instanceof Error)
+        const res = await axios.post("/api/auth/seller/upload", data)
+        if (res.status === 200) {
+          const { url } = res.data
           setFormData({
             files: {
               [name]: {
                 ...useOnboardingStore.getState().formData.files[name as Image],
-                status: error.message
+                status: true,
+                url,
+              }
+            }
+          })
+        }
+
+      } catch (error) {
+        if (axios.isAxiosError(error))
+          setFormData({
+            files: {
+              [name]: {
+                ...useOnboardingStore.getState().formData.files[name as Image],
+                status: error.response?.data?.message
               }
             }
           })
@@ -142,7 +150,7 @@ export default function Verification() {
                       {error?.[item.name] &&
                         <div className="flex text-sm gap-1.5">
                           <Icon className="text-red-400" icon="material-symbols:cancel-rounded" />
-                          <p className="text-red-400">{error?.[item.name]}</p>
+                          <p className="text-red-400 text-xs">{error?.[item.name]}</p>
                         </div>
                       }
 
