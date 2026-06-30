@@ -1,7 +1,7 @@
 import "next-auth"
 import "next-auth/jwt"
 
-interface Auth {
+export type Auth = {
     name: string,
     email: string,
     role: string
@@ -9,13 +9,28 @@ interface Auth {
 }
 
 declare module "next-auth" {
-  interface User extends Auth {}
+  interface User {
+    name: string,
+    email: string,
+    role: string
+    id: string,
+  }
   interface Session {
-    user: Auth
+    user: {
+      name: string,
+      email: string,
+      role: string,
+      id: string,
+    }
   }
 }
 
 declare module "next-auth/jwt" {
-  interface JWT extends Auth {}
+  interface JWT {
+    name: string,
+    email: string,
+    role: string,
+    id: string,
+  }
 }
 

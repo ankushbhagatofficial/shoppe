@@ -4,18 +4,14 @@ import { denv } from "@/utils/env"
 import User from "./model/user.model"
 import Google from "next-auth/providers/google"
 import Credentials from "next-auth/providers/credentials"
+import { Auth } from "@/types/next-auth"
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Google,
     Credentials({
       authorize: async (credentials) => {
-        const user = credentials as {
-          id: string,
-          name: string,
-          email: string,
-          role: string,
-        }
+        const user = credentials as Auth 
 
         return {
           id: user.id,
