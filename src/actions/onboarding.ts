@@ -12,9 +12,9 @@ export async function checkStoreURL(storeURL: string): Promise<boolean | string 
 
   if (!storeURL) return
   if (storeURL.length > 30) return
-  const result = await Seller.exists({ "store.url": storeURL })
+  const result = await Seller.findOne({ "store.url": storeURL, _id: { $ne: user?.id } })
 
-  return user?.id !== result?._id.toString()
+  return !!result
 }
 
 export async function onboardingAction(formData: OnboardingStore["formData"]): Promise<{ success: boolean, errors?: any } | undefined> {
@@ -84,10 +84,7 @@ export async function onboardingAction(formData: OnboardingStore["formData"]): P
         bankName,
       },
       "store.name": storeName,
-      "store.url": storeURL.toLowerCase()
-        .replace(/[^a-z0-9-]/g, "")
-        .replace(/\s+/g, "-")
-        .replace(/-+/g, "-"),
+      "store.url": storeURL,
       "store.description": storeDescription,
       onboardingComplete: true,
     })

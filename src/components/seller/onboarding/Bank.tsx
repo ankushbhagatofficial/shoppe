@@ -19,6 +19,12 @@ export default function Bank() {
 
   const handleSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setErrors({
+      accountHolder: "",
+      accountNumber: "",
+      ifscCode: "",
+      bankName: "",
+    })
     const result = bankSchema.safeParse(formData)
     const status = result.success
     setErrors(result.error?.flatten().fieldErrors ?? {})

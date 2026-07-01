@@ -27,6 +27,9 @@ export const profileSchema = z.object({
 
   storeURL: z.string().min(3, "Store URL must be at least 3 characters long.")
     .max(30, "Store URL is too long")
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
+      message: "Store URL can only contain lowercase letters, numbers, and hyphens.",
+    })
     .superRefine(async (val, ctx) => {
       const exists = await checkStoreURL(val)
 

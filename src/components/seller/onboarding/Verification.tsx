@@ -98,24 +98,28 @@ export default function Verification() {
   }
 
   const validateForm = () => {
+    const files = formData.files
     const errors: {
       panCard?: string,
       identityCard?: string,
       gstCertificate?: string
-    } = {}
+    } = {
+      panCard: "",
+      identityCard: "",
+      gstCertificate: ""
+    }
 
-    if (!formData.files.panCard?.url) {
+    if (!files.panCard?.url) {
       errors.panCard = "PAN Card is missing"
     }
-    if (!formData.files.identityCard?.url) {
+    if (!files.identityCard?.url) {
       errors.identityCard = "Identity Card is missing"
     }
-    if (!formData.files.gstCertificate?.url) {
+    if (!files.gstCertificate?.url) {
       errors.gstCertificate = "GST Certificate is missing"
     }
 
     return errors
-
   }
 
   const handleSubmit = (e: SyntheticEvent<HTMLFormElement>) => {

@@ -222,7 +222,7 @@ export default function Profile({ seller }: { seller: any }) {
         <div className="flex flex-col gap-4">
           <span className="font-bold text-lg">Business Details</span>
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-semibold text-white/60">GST Number</label>
+            <label className="text-sm font-semibold text-white/60">GST Number (Optional)</label>
             <input onChange={handleOnChange} className="border-2 border-gray-400 outline-0 focus:border-white rounded-sm p-2 text-sm" type="text" name="gstNumber" id="business" defaultValue={data.business?.gstNumber} />
             {error?.gstNumber && <p className="text-xs text-red-400">{error.gstNumber}</p>}
           </div>
@@ -246,9 +246,9 @@ export default function Profile({ seller }: { seller: any }) {
               {error?.storeURL && <p className="text-xs text-red-400">{error?.storeURL}</p>}
 
             </label>
-            <div className="flex border-2 border-gray-400 outline-0 focus-within:border-white rounded-sm items-center text-sm pl-2">
-              <span className="text-neutral-400/80 text-xs">{window?.location.origin}/store/</span>
-              <input onChange={handleStoreURL} defaultValue={data.store?.url} required maxLength={30} className="py-2 pr-2 w-full outline-0" type="text" name="url" id="store" />
+            <div className="flex border-2 border-gray-400 text-xs h-10 outline-0 focus-within:border-white rounded-sm items-center pl-2">
+              <span className="text-neutral-400/80 font-semibold">{window?.location.host}/store/</span>
+              <input onChange={handleStoreURL} value={data.store?.url} required maxLength={30} className="py-2 pr-2 w-full outline-0" type="text" name="url" id="store" />
             </div>
           </div>
 

@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import connectDB from "@/lib/mongodb"
 import Seller from "@/lib/model/seller.model"
 import cloudinary from "@/lib/cloudinary";
+import { redirect } from "next/navigation";
 
 export async function DELETE() {
   try {
@@ -23,7 +24,7 @@ export async function DELETE() {
 
     await seller.deleteOne()
 
-    return new Response(null, { status: 200 })
+    redirect("/logout")
   } catch (error) {
     return Response.json({
       message: process.env.NODE_ENV === "development" ? error : "Internal Server Error Occured!",

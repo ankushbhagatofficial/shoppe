@@ -3,7 +3,6 @@ import { Inter, Poppins, Nunito } from "next/font/google";
 import type { Metadata } from "next";
 import Provider from "@/provider"
 
-
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],

@@ -1,10 +1,11 @@
 import Tooltip from "@/components/ui/tooltip";
+import { businessSchema } from "@/lib/zod/seller/onboarding.schema";
 import { useOnboardingStore } from "@/store/seller/onboarding";
 import { Icon } from "@iconify/react";
 import { ChangeEvent, SyntheticEvent } from "react";
 
 export default function Business() {
-  const { nextStep, errors, formData, setFormData } = useOnboardingStore()
+  const { nextStep, setPage, errors, setErrors, formData, setFormData } = useOnboardingStore()
 
   const handleChar = (e: SyntheticEvent<HTMLTextAreaElement>) => {
     const target = e.currentTarget
@@ -24,7 +25,17 @@ export default function Business() {
 
   const handleSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault()
-    nextStep()
+    setErrors({
+      gstNumber: "",
+      businessAddress: ""
+    })
+    const result = businessSchema.safeParse(formData)
+    const status = result.success
+    setErrors(result.error?.flatten().fieldErrors ?? {})
+    if (status)
+      nextStep()
+    else
+      setPage({ business: false })
   }
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">

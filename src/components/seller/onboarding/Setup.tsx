@@ -9,7 +9,7 @@ import axios from "axios";
 type Image = "logo" | "banner"
 
 export default function Setup() {
-  const { reset, resetErrors, errors, setErrors, formData, setFormData } = useOnboardingStore()
+  const { reset, resetErrors, errors, setErrors, setStep, pages, setPage, formData, setFormData } = useOnboardingStore()
   const [image, setImage] = useState({
     logo: formData.files.logo?.url,
     banner: formData.files.banner?.url
@@ -123,6 +123,23 @@ export default function Setup() {
     e.preventDefault()
     resetErrors()
 
+    const fieldToStep: Record<string, number> = {
+      businessType: 0,
+      gstNumber: 0,
+      accountHolder: 1,
+      accountNumber: 1,
+      ifscCode: 1,
+      bankName: 1,
+      panCard: 2,
+      identityCard: 2,
+      gstCertificate: 2,
+      logo: 3,
+      banner: 3,
+      storeName: 3,
+      storeURL: 3,
+      storeDescription: 3,
+    }
+
     setLoading(prev => ({
       ...prev, submit: true
     }))
@@ -135,6 +152,12 @@ export default function Setup() {
       setLoading(prev => ({
         ...prev, submit: false
       }))
+      const firstError = Object.keys(result?.errors)[0]
+      setStep(fieldToStep[firstError])
+      for (const key of Object.keys(result?.errors)) {
+        const targetStep = fieldToStep[key]
+        setPage({[Object.keys(pages)[targetStep]]: false})
+      }
       setErrors(result?.errors)
     }
 
@@ -255,10 +278,9 @@ export default function Setup() {
       <div className="flex flex-col gap-2">
         <label className="flex items-center justify-between text-sm font-semibold">Store URL
           {errors?.storeURL && <p className="text-xs text-red-400">{errors?.storeURL}</p>}
-
         </label>
-        <div className="flex border-2 rounded-sm items-center text-sm pl-2">
-          <span className="text-neutral-400/80">{window.location.origin}/store/</span>
+        <div className="flex border-2 rounded-sm items-center text-xs pl-2 h-10">
+          <span className="text-neutral-400/80 font-semibold">{window.location.host}/store/</span>
           <input onChange={handleStoreURL} value={formData.storeURL} required maxLength={30} className="py-2 pr-2 w-full outline-0" type="text" name="storeURL" />
 
         </div>

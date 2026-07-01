@@ -17,7 +17,8 @@ export default function Account({ seller }: { seller: any }) {
   const [passwordSubmit, setPasswordSubmit] = useState(false)
   const [emailUpdated, setEmailUpdated] = useState(false)
   const [passwordUpdated, setPasswordUpdated] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false)
+  const [showNewPassword, setShowNewPassword] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [deleteText, setDeleteText] = useState("")
   const [deleteAccount, setDeleteAccount] = useState(false)
@@ -72,11 +73,15 @@ export default function Account({ seller }: { seller: any }) {
     setPasswordSubmit(true)
     setPasswordUpdated(false)
     try {
+
       const res = await axios.post("/api/update/seller/password", data)
       if (res.status === 200) {
         setPasswordUpdated(true)
-        e.currentTarget.reset()
-        console.log("Password Updated")
+        setTimeout(() => {
+          setData(prev => ({
+            ...prev, currentPassword: "", newPassword: ""
+          }))
+        }, 500);
       }
 
     } catch (error) {
@@ -92,11 +97,11 @@ export default function Account({ seller }: { seller: any }) {
     setDeleteAccount(true)
     try {
       const res = await axios.delete("/api/delete/seller")
-      if (res.status === 200) router.replace("/") 
+      if (res.status === 200) router.replace("/")
     } catch (error) {
 
     }
-    setDeleteAccount(false)    
+    setDeleteAccount(false)
   }
 
   return (
@@ -213,16 +218,16 @@ export default function Account({ seller }: { seller: any }) {
             <div className="flex flex-col gap-2 w-full">
               <label className="font-semibold text-sm text-white/60">Current Password</label>
               <div className="relative">
-                <input onChange={handleOnChange} className="text-sm border-2 border-gray-400 rounded p-2 w-full outline-0 focus:border-white" type={showPassword ? "text" : "password"} name="currentPassword" placeholder="Enter current password" autoComplete="current-password" required />
-                <Icon className="absolute cursor-pointer text-xl top-1/2 right-1 -translate-1/2" onClick={() => setShowPassword(!showPassword)} icon={showPassword ? "mdi:eye-outline" : "mdi:eye-off-outline"} />
+                <input onChange={handleOnChange} className="text-sm border-2 border-gray-400 rounded p-2 w-full outline-0 focus:border-white" value={data?.currentPassword ?? ""} type={showCurrentPassword ? "text" : "password"} name="currentPassword" placeholder="Enter current password" autoComplete="current-password" required />
+                <Icon className="absolute cursor-pointer text-xl top-1/2 right-1 -translate-1/2" onClick={() => setShowCurrentPassword(!showCurrentPassword)} icon={showCurrentPassword ? "mdi:eye-outline" : "mdi:eye-off-outline"} />
               </div>
             </div>
 
             <div className="flex flex-col gap-2 w-full">
               <label className="font-semibold text-sm text-white/60">New Password</label>
               <div className="relative">
-                <input onChange={handleOnChange} className="text-sm border-2 border-gray-400 outline-0 focus:border-white rounded p-2 w-full" type={showPassword ? "text" : "password"} name="newPassword" placeholder="Enter new password" autoComplete="new-password" required />
-                <Icon className="absolute cursor-pointer text-xl top-1/2 right-1 -translate-1/2" onClick={() => setShowPassword(!showPassword)} icon={showPassword ? "mdi:eye-outline" : "mdi:eye-off-outline"} />
+                <input onChange={handleOnChange} className="text-sm border-2 border-gray-400 outline-0 focus:border-white rounded p-2 w-full" value={data?.newPassword ?? ""} type={showNewPassword ? "text" : "password"} name="newPassword" placeholder="Enter new password" autoComplete="new-password" required />
+                <Icon className="absolute cursor-pointer text-xl top-1/2 right-1 -translate-1/2" onClick={() => setShowNewPassword(!showNewPassword)} icon={showNewPassword ? "mdi:eye-outline" : "mdi:eye-off-outline"} />
               </div>
             </div>
           </div>

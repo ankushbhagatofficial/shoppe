@@ -28,7 +28,7 @@ function Role({ admin, setStep }: { admin: boolean, setStep: Function }) {
             <div className="flex flex-col">
               <label>
                 <input onChange={(e) => setRole(e.target.value)} className="hidden peer" type="radio" name="role" value="user" defaultChecked />
-                <div className="flex flex-col justify-center items-center text-gray-300 bg-neutral-700 w-40 h-30 md:w-40 md:h-40 lg:w-50 lg:h-50 rounded-xl border-3 border-transparent hover:border-green-500 peer-checked:text-green-400 peer-checked:bg-green-800 peer-checked:border-3 peer-checked:border-green-500 transition-all duration-200">
+                <div className="flex flex-col cursor-pointer justify-center items-center text-gray-300 bg-neutral-700 w-40 h-30 md:w-40 md:h-40 lg:w-50 lg:h-50 rounded-xl border-3 border-transparent hover:border-green-500 peer-checked:text-green-400 peer-checked:bg-green-800 peer-checked:border-3 peer-checked:border-green-500 transition-all duration-200">
                   <Icon className="text-5xl md:text-8xl" icon="boxicons:user-filled" />
                   <h2 className="text-lg md:text-xl font-semibold select-none">User</h2>
                 </div>
@@ -38,7 +38,7 @@ function Role({ admin, setStep }: { admin: boolean, setStep: Function }) {
             <div className="flex flex-col">
               <label>
                 <input onChange={(e) => setRole(e.target.value)} className="hidden peer" type="radio" name="role" value="seller" />
-                <div className="flex flex-col justify-center items-center text-gray-300 bg-neutral-700 w-40 h-30 md:w-40 md:h-40 lg:w-50 lg:h-50 rounded-xl border-3 border-transparent hover:border-yellow-600 peer-checked:text-yellow-700 peer-checked:bg-yellow-400 peer-checked:border-3 peer-checked:border-yellow-600 transition-all duration-200">
+                <div className="flex flex-col cursor-pointer justify-center items-center text-gray-300 bg-neutral-700 w-40 h-30 md:w-40 md:h-40 lg:w-50 lg:h-50 rounded-xl border-3 border-transparent hover:border-yellow-600 peer-checked:text-yellow-700 peer-checked:bg-yellow-400 peer-checked:border-3 peer-checked:border-yellow-600 transition-all duration-200">
                   <Icon className="text-5xl md:text-8xl" icon="material-symbols:store-rounded" />
                   <h2 className="text-lg md:text-xl font-semibold select-none">Seller</h2>
                 </div>
@@ -49,7 +49,7 @@ function Role({ admin, setStep }: { admin: boolean, setStep: Function }) {
               <div className="flex flex-col">
                 <label>
                   <input onChange={(e) => setRole(e.target.value)} className="hidden peer" type="radio" name="role" value="admin" />
-                  <div className="flex flex-col justify-center items-center text-gray-300 bg-neutral-700 w-40 h-30 md:w-40 md:h-40 lg:w-50 lg:h-50 rounded-xl border-3 border-transparent hover:border-red-600 peer-checked:text-red-700 peer-checked:bg-red-400 peer-checked:border-3 peer-checked:border-red-600 transition-all duration-200">
+                  <div className="flex flex-col cursor-pointer justify-center items-center text-gray-300 bg-neutral-700 w-40 h-30 md:w-40 md:h-40 lg:w-50 lg:h-50 rounded-xl border-3 border-transparent hover:border-red-600 peer-checked:text-red-700 peer-checked:bg-red-400 peer-checked:border-3 peer-checked:border-red-600 transition-all duration-200">
                     <Icon className="text-5xl md:text-8xl" icon="material-symbols:admin-panel-settings-rounded" />
                     <h2 className="texl-lg md:text-xl font-semibold select-none">Admin</h2>
                   </div>
