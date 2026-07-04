@@ -121,6 +121,13 @@ const sellerSchema = new Schema({
     default: "seller"
   },
 
+  products: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Product"
+    }
+  ], 
+
   blocked: {
     type: Boolean,
     default: false

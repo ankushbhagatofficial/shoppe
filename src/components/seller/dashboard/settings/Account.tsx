@@ -11,6 +11,27 @@ import { useRouter } from 'next/navigation';
 export default function Account({ seller }: { seller: any }) {
   const router = useRouter()
   const [data, setData] = useState<Partial<any>>(seller)
+  const status = {
+    pending: {
+      title: "Pending",
+      icon: "mdi:clock-outline",
+      colors: "text-yellow-800 bg-yellow-300",
+      text: "Your documents are under review.",
+    },
+    approved: {
+      title: "Verified",
+      icon: "material-symbols:verified-outline-rounded",
+      colors: "text-green-800 bg-green-300",
+      text: "Your identity has been verified."
+    },
+    rejected: {
+      title: "Rejected",
+      icon: "material-symbols:cancel-outline-rounded",
+      colors: "text-red-800 bg-red-300",
+      text: "Verification was rejected. Check the reason and resubmit."
+    }
+  }
+  const currentStatus = status[data.status as keyof typeof status]
   const [emailError, setEmailError] = useState("")
   const [passwordError, setPasswordError] = useState("")
   const [emailSubmit, setEmailSubmit] = useState(false)
@@ -192,6 +213,37 @@ export default function Account({ seller }: { seller: any }) {
       </AnimatePresence>
 
       <div className="flex flex-col p-4 gap-4">
+
+        <div className='flex gap-5 flex-col justify-between sm:flex-row border-b border-white/20 pb-5'>
+          <div className='flex gap-2'>
+            <div className={`w-20 h-20 shrink-0 rounded-full flex justify-center items-center ${currentStatus.colors}`}>
+              <Icon className='h-[60%] w-full' icon="mdi:shield-account-outline" />
+            </div>
+            <div className="flex flex-col text-xs w-[80%]">
+              <h1 className='text-lg font-bold'>Verification Status</h1>
+              <div className="text-xs flex flex-col gap-1">
+                <p className='font-semibold'>{currentStatus.text}</p>
+                {data.status === "rejected" &&
+                  <a href="/seller/resubmit">
+                    <button type="button" className='flex gap-1 cursor-pointer items-center rounded-full w-fit p-1 px-3 bg-neutral-700'>
+                      <Icon icon="material-symbols:restart-alt-rounded" />Resubmit
+                    </button>
+                  </a>
+                }
+                {data.status === "pending" && <p>We'll notify you once the review is complete.</p>}
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div className={`w-fit p-1 px-3 flex items-center gap-1 text-xs rounded-full ${currentStatus.colors}`}>
+              <Icon className='h-[90%] w-full' icon={currentStatus.icon} />
+              <p className="text-nowrap font-semibold">{currentStatus.title}</p>
+            </div>
+          </div>
+
+        </div>
+
         <form onSubmit={updateEmail} className="flex flex-col gap-2">
           <span className="font-bold text-lg">Email</span>
           <div className="flex flex-col gap-2">

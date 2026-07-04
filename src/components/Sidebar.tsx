@@ -122,8 +122,9 @@ export default function Sidebar({ children, session }: { children: ReactNode, se
             </div>
 
           </div>
-          <div>
-            <a href="/logout" className="flex px-5 mb-10 py-2 gap-3 items-center rounded-full bg-neutral-700" ><Icon icon="line-md:log-out" />Logout</a>
+          <div className="flex flex-col mb-10 gap-5">
+            <a href={"help"} className="flex px-5 py-2 gap-3 items-center rounded-full bg-neutral-700" ><Icon icon="material-symbols:help-outline-rounded" />Help & Support</a>
+            <a href="/logout" className="flex px-5 py-2 gap-3 items-center rounded-full bg-neutral-700" ><Icon icon="line-md:log-out" />Logout</a>
           </div>
         </nav>
       </aside>

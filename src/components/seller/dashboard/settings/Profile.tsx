@@ -161,7 +161,7 @@ export default function Profile({ seller }: { seller: any }) {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.2 }}
             className="sticky z-20 top-1/2">
-            <div className='absolute left-1/2 top-1/2 -translate-1/2 flex justify-center items-center'>
+            <div className='absolute left-1/2 top-1/2 -translate-1/2'>
               <div className="flex flex-col justify-center w-[90%] items-center m-10 p-10 bg-neutral-700 rounded-md gap-4">
                 <DotLottieReact className="w-40" src="https://lottie.host/ec51bba0-50cf-4b58-9a7a-dbf78f736d90/xBTnXoiywq.lottie" autoplay />
                 <h2 className="text-center text-lg leading-0 md:text-xl font-semibold font-poppins">Profile Updated!</h2>
@@ -191,7 +191,7 @@ export default function Profile({ seller }: { seller: any }) {
             </div>
           }
         </label>
-        <label className="absolute z-20 bg-neutral-900 -bottom-15 md:-bottom-25 left-1/2 -translate-x-1/2 w-30 h-30 md:w-50 md:h-50 rounded-full border-2 overflow-hidden">
+        <label className="absolute z-15 bg-neutral-900 -bottom-15 md:-bottom-25 left-1/2 -translate-x-1/2 w-30 h-30 md:w-50 md:h-50 rounded-full border-2 overflow-hidden">
           <input onChange={handleImageChange} className="hidden" type="file" name="logo" id="store" />
           {
             loading.logo &&
