@@ -89,7 +89,7 @@ export default function page() {
   )
 
   return (
-    <div className="relative flex flex-col gap-4 h-dvh">
+    <div className="relative flex flex-col gap-4 h-[88dvh]">
 
       {productModal && <motion.div exit={{ opacity: 0 }} initial={{ opacity: 0 }}
         animate={{ opacity: 1 }} transition={{ duration: 0.2 }}
@@ -103,8 +103,10 @@ export default function page() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.2 }}
-            className='absolute z-20 left-1/2 top-1/2 -translate-1/2 p-5 w-[95%] h-[95%] bg-neutral-800 rounded-lg border border-white/20'>
-            <AddProduct closeModal={() => setProductModal(false)} />
+            className='sticky z-20 top-1/2'>
+            <div className="absolute left-1/2 top-5 -translate-1/2 p-5 w-full md:w-[95%] h-[88dvh] bg-neutral-800 rounded-lg border border-white/20">
+              <AddProduct closeModal={() => setProductModal(false)} />
+            </div>
           </motion.div>
         }
       </AnimatePresence>
@@ -120,7 +122,7 @@ export default function page() {
         <div>
           <label className="relative">
             <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2" height="20" />
-            <input placeholder="Search any product..." className="border-2 w-full h-full p-1 px-10 rounded-full" type="text" />
+            <input placeholder="Search product..." className="border-2 text-sm w-full h-full p-1 px-10 rounded-full" type="text" />
           </label>
         </div>
         <div>

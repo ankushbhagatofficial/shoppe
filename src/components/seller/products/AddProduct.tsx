@@ -4,9 +4,11 @@ import axios from "axios";
 import { Icon } from "@iconify/react"
 import { useState, useEffect, SyntheticEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import RichTextEditor from "@/components/tiptap/RichTextEditor";
 
 export default function AddProduct({ closeModal }: { closeModal: Function }) {
   const categories: string[] = [
+    "Custom",
     "Electronics",
     "Mobiles",
     "Laptops",
@@ -169,6 +171,21 @@ export default function AddProduct({ closeModal }: { closeModal: Function }) {
 
   const [tag, setTag] = useState("")
   const [tags, setTags] = useState<string[]>([])
+  const [description, setDescription] = useState("")
+
+  useEffect(() => {
+    console.log(description);
+
+  }, [description])
+
+  const handleShortDesc = (e: SyntheticEvent<HTMLTextAreaElement>) => {
+    const target = e.currentTarget
+    // setFormData({
+    //   [target.name]: target.value
+    // })
+    const sibling = target.nextElementSibling
+    if (sibling) sibling.textContent = `${target.value.length}/${target.maxLength}`
+  }
 
   function selectCategory(value: string) {
     setCategory(value);
@@ -185,7 +202,7 @@ export default function AddProduct({ closeModal }: { closeModal: Function }) {
   }
 
   return (
-    <div className="flex flex-col gap-4 overflow-y-auto">
+    <div className="flex flex-col gap-4 h-full">
       <div className="flex justify-between items-center">
         <div className="flex flex-col w-full">
           <h1 className="font-bold text-lg">Add New Product</h1>
@@ -197,79 +214,154 @@ export default function AddProduct({ closeModal }: { closeModal: Function }) {
       </div>
       <hr className="border border-white/20" />
       <form className="flex flex-col gap-4 overflow-y-auto">
-        <div className="flex flex-col border border-white/20 rounded-lg p-5 gap-4">
+        <div className="flex flex-col border border-white/20 rounded-lg p-5 gap-4 overflow-y-auto">
           <div className="flex flex-col gap-4">
             <label className="font-bold">Product Information</label>
 
             <div className="flex flex-col gap-4 md:flex-row md:gap-10">
               <div className="flex flex-col w-full gap-2">
                 <label className="font-semibold text-sm">Product Name <span className="text-red-500">*</span></label>
-                <input className="border rounded p-1 px-2 w-full" placeholder="Enter Product Name" type="text" name="name" required />
+                <input className="rounded p-1 px-2 w-full outline-0 border-2 border-white/20 focus:border-white/80 text-sm h-10" placeholder="Enter Product Name" type="text" name="name" required />
               </div>
               <div className="flex flex-col w-full gap-2">
                 <label className="font-semibold text-sm">Brand Name</label>
-                <input className="border rounded p-1 px-2 w-full" placeholder="Enter Brand Name" type="text" name="brand" />
+                <input className="rounded p-1 px-2 w-full outline-0 border-2 border-white/20 focus:border-white/80 text-sm h-10" placeholder="Enter Brand Name" type="text" name="brand" />
               </div>
             </div>
-
-            <div className="flex flex-col w-full gap-2">
-              <label className="font-semibold text-sm">Select Category <span className="text-red-500">*</span></label>
-              <div className="flex flex-col gap-4">
-                <input onClick={() => setShowCategory(true)} readOnly className="border rounded p-1 px-2 w-full" value={category} type="text" name="category" placeholder="Select Product Category" />
-                {showCategory &&
-                  <div className="flex flex-col gap-4 bg-neutral-700/50 w-full rounded-md p-5">
-                    <div>
-                      <input type="text" autoFocus
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        placeholder="Search category..."
-                        className="w-full rounded border outline-0 px-3 py-1" />
-                    </div>
-
-                    <div className="flex flex-col h-52 border border-white/20 rounded p-2 overflow-y-auto">
-                      {
-                        filteredSearch.map((item, index) => (
-                          <button key={index} onClick={() => selectCategory(item)} type="button" className="text-left rounded my-1 p-1 px-2 hover:bg-green-700">{item}</button>
-                        ))
-                      }
-                    </div>
-                  </div>
-                }
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <label className="font-semibold text-sm">Tags</label>
-              <input onChange={(e) => setTag(e.target.value)} onKeyDown={handleTag} placeholder="Type a tag" value={tag} className="rounded border outline-0 px-3 py-1" type="text" name="tags" />
-              <div className="flex gap-2 flex-wrap">
-                {tags.map((item, index) => (
-                  <span className="flex gap-2 text-sm rounded-full pl-3 p-0.5 bg-neutral-700" key={item}>{item}
-                    <button
-                      className="rounded-full bg-neutral-800/20 w-5 h-5 flex items-center justify-center cursor-pointer hover:bg-neutral-800"
-                      onClick={() => setTags(tags.filter((_, i) => i !== index))} type="button">
-                      <Icon icon="mdi:remove" />
-                    </button>
-                  </span>
-                ))}
-              </div>
-            </div>
-
-          </div>
-
-          <div className="flex flex-col gap-4">
-            <label className="font-bold">Pricing</label>
 
             <div className="flex flex-col gap-4 md:flex-row md:gap-10">
-              <div className="flex flex-col w-full gap-2">
-                <label className="font-semibold text-sm">Price <span className="text-red-500">*</span></label>
-                <input className="border rounded p-1 px-2 w-full" placeholder="Enter Price" type="text" name="name" required />
+              <div className="flex flex-col gap-2 w-full">
+                <label className="font-semibold text-sm">Slug</label>
+                <input className="rounded p-1 px-2 w-full outline-0 border-2 border-white/20 focus:border-white/80 text-sm h-10" type="text" name="slug" />
               </div>
-              <div className="flex flex-col w-full gap-2">
-                <label className="font-semibold text-sm">Cost Price</label>
-                <input className="border rounded p-1 px-2 w-full" placeholder="Enter Cost Price" type="text" name="brand" />
+
+              <div className="flex flex-col gap-2 w-full">
+                <label className="font-semibold text-sm">Tags</label>
+                <input onChange={(e) => setTag(e.target.value)} onKeyDown={handleTag} placeholder="Type a tag" value={tag}
+                  className="rounded px-3 py-1 outline-0 border-2 border-white/20 focus:border-white/80 text-sm h-10" type="text" name="tags" />
+                <div className="flex gap-2 flex-wrap">
+                  {tags.map((item, index) => (
+                    <span className="flex gap-2 text-sm rounded-full pl-3 p-0.5 bg-neutral-700" key={index}>{item}
+                      <button
+                        className="rounded-full bg-neutral-800/20 w-5 h-5 flex items-center justify-center cursor-pointer hover:bg-neutral-800"
+                        onClick={() => setTags(tags.filter((_, i) => i !== index))} type="button">
+                        <Icon icon="mdi:remove" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
+
+            <div className="flex flex-col gap-4 md:flex-row md:gap-10">
+              <div className="flex flex-col w-full">
+                <div className="flex flex-col w-full gap-2">
+                  <label className="font-semibold text-sm">Select Category <span className="text-red-500">*</span></label>
+                  <div className="flex flex-col gap-4">
+                    <input onClick={() => setShowCategory(true)} readOnly className="rounded p-1 px-2 w-full outline-0 border-2 border-white/20 focus:border-white/80 text-sm h-10" value={category} type="text" name="category" placeholder="Select Product Category" />
+                    {showCategory &&
+                      <div className="flex flex-col gap-4 bg-neutral-700/50 w-full rounded-md p-5">
+                        <div>
+                          <input type="text" autoFocus
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            placeholder="Search category..."
+                            className="w-full border rounded  outline-0 px-3 py-1" />
+                        </div>
+
+                        <div className="flex flex-col h-52 border border-white/20 rounded p-2 overflow-y-auto">
+                          {filteredSearch.map((item, index) => (
+                            <button key={index} onClick={() => selectCategory(item)} type="button" className="text-left rounded my-1 p-1 px-2 hover:bg-blue-500">{item}</button>
+                          ))
+                          }
+                          {filteredSearch.length === 0 &&
+                            <p className="text-sm font-semibold text-center">No Category Found</p>
+                          }
+                        </div>
+                      </div>
+                    }
+                  </div>
+                  {category == "Custom" &&
+                    <div className="flex flex-col w-full gap-2">
+                      <label className="font-semibold text-sm">Custom Category</label>
+                      <input className="rounded p-1 px-2 w-full outline-0 border-2 border-white/20 focus:border-white/80 text-sm h-10" placeholder="Enter Custom Category" type="text" name="customCategory" />
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <div className="flex flex-col w-full gap-2">
+                <label className="font-semibold text-sm">Short Description</label>
+                <div className="relative">
+                  <textarea maxLength={200} onChange={handleShortDesc} rows={6} className="rounded p-1 px-2 w-full outline-0 border-2 border-white/20 focus:border-white/80 text-sm min-h-20 max-h-fit" placeholder="Briefly describe your product..." name="shortDesc" />
+                  <p className="absolute bottom-3 right-3 text-xs font-semibold">{"0/200"}</p>
+                </div>
+              </div>
+            </div>
+
           </div>
+
+          <div className="flex flex-col gap-4 md:flex-row md:gap-10">
+
+            <div className="flex flex-col gap-4">
+              <label className="font-bold flex gap-2 items-center">
+                <Icon fontSize={20} className="text-green-400" icon="mdi:tag-outline" />
+                Pricing
+              </label>
+
+              <div className="flex flex-col gap-4 md:flex-row md:gap-10">
+                <div className="flex flex-col w-full gap-2">
+                  <label className="font-semibold text-sm">Price <span className="text-red-500">*</span></label>
+                  <div className="flex items-center border-2 border-white/20 focus-within:border-white/80 rounded px-1 h-10">
+                    <Icon fontSize={16} icon="material-symbols:currency-rupee-rounded" />
+                    <input min={49} className="outline-0 px-2 w-full text-sm" placeholder="Enter Price" type="number" name="price" required />
+                  </div>
+                </div>
+                <div className="flex flex-col w-full gap-2">
+                  <label className="font-semibold text-sm">M.R.P</label>
+                  <div className="flex items-center border-2 border-white/20 focus-within:border-white/80 rounded px-1 h-10">
+                    <Icon fontSize={16} icon="material-symbols:currency-rupee-rounded" />
+                    <input min={49} className="outline-0 px-2 w-full text-sm" placeholder="Enter MRP" type="number" name="mrp" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <label className="font-bold flex gap-2 items-center">
+                <Icon fontSize={20} className="text-blue-400" icon="mdi:cube-outline" />
+                Inventory
+              </label>
+
+              <div className="flex flex-col gap-4 md:flex-row md:gap-10">
+                <div className="flex flex-col w-full gap-2">
+                  <label className="font-semibold text-sm">Stock <span className="text-red-500">*</span></label>
+                  <div className="flex items-center border-2 border-white/20 focus-within:border-white/80 rounded px-1 h-10">
+                    <input min={1} className="outline-0 px-2 w-full text-sm" placeholder="Available Stock" type="number" name="stock" required />
+                  </div>
+                </div>
+                <div className="flex flex-col w-full gap-2">
+                  <label className="font-semibold text-sm">Low Stock Alert <span className="text-red-500">*</span></label>
+                  <div className="flex items-center border-2 border-white/20 focus-within:border-white/80 rounded px-1 h-10">
+                    <input min={0} defaultValue={5} className="outline-0 px-2 w-full text-sm" placeholder="Enter MRP" type="number" name="lowStock" required />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="font-bold flex gap-2 items-center">
+              <Icon fontSize={20} className="text-yellow-400" icon="mdi:text" />
+              Description
+            </label>
+            <RichTextEditor value={description} onChange={setDescription} />
+          </div>
+
+          {/* <div className="prose dark:prose-invert max-w-none" */}
+          {/*   dangerouslySetInnerHTML={{ __html: description }} */}
+          {/* /> */}
         </div>
 
         <div className="flex gap-4 w-full justify-end select-none">
