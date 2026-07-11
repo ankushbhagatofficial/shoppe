@@ -1,10 +1,10 @@
 import connectDB from "@/lib/mongodb"
 import Register from "@/components/Register"
-import User from "@/lib/model/user.model"
+import Admin from "@/lib/model/admin.model"
 
 export default async function page() {
   await connectDB()
-  const admin = await User.exists({ role: "admin" })
+  const admin = await Admin.findOne().sort({ _id: 1 })
   return <Register admin={!!admin} />
 }
 

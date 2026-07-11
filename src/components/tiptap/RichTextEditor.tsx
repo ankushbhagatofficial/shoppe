@@ -269,15 +269,14 @@ export default function RichTextEditor({ value, onChange }: { value: string, onC
   const editor = useEditor({
     extensions: [
       StarterKit,
-      Link,
       TextAlign.configure({
         types: ["heading", "paragraph"],
       }),
       Highlight.configure({ multicolor: true }),
-      Blockquote,
       Image,
     ],
 
+    immediatelyRender: true,
     content: value,
 
     onUpdate({ editor }) {

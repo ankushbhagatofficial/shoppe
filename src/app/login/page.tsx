@@ -13,6 +13,7 @@ export default function page() {
   const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [error, setError] = useState("")
   const [loadingA, setLoadingA] = useState(false)
   const [loadingB, setLoadingB] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
@@ -30,12 +31,11 @@ export default function page() {
 
   const handleSubmit = async (e: ChangeEvent) => {
     e.preventDefault()
+    setError("")
     setLoadingA(true)
-    try {
-      await loginAction({ email, password })
-    } catch (error) {
-      if (error instanceof Error)
-        console.log(error?.message);
+    const result = await loginAction({ email, password })
+    if (!result.success) {
+      setError(result.message)
     }
     setLoadingA(false)
 
@@ -62,6 +62,10 @@ export default function page() {
               <Icon className="absolute cursor-pointer text-xl top-1/2 right-1 -translate-1/2" onClick={() => setShowPassword(!showPassword)} icon={showPassword ? "mdi:eye-outline" : "mdi:eye-off-outline"} />
             </div>
           </div>
+
+          {error &&
+            <div className="text-xs -my-2 text-red-500">{error}</div>
+          }
 
           <div className="flex flex-col gap-y-1">
             <Link className="underline text-sm" href={"/forgotpassword"} >Forgot password?</Link>

@@ -46,7 +46,7 @@ export async function proxy(request: NextRequest) {
 
   let routes = session ? publicRoutes[role as Role] : privateRoutes
 
-  const route = routes.find((route: Route) => (route.url.some((path) => pathname.startsWith(path))))
+  const route = routes?.find((route: Route) => (route.url.some((path) => pathname.startsWith(path))))
   if (route?.dest)
     return NextResponse.redirect(new URL(route.dest, request.url))
 

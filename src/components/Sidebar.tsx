@@ -16,7 +16,7 @@ export default function Sidebar({ children, session }: { children: ReactNode, se
 
   useEffect(() => {
     const fetchAvatar = async () => {
-      const res = await axios.get("/api/get/avatar")
+      const res = await axios.get("/api/avatar")
       setAvatar(res.data?.avatar)
     }
     fetchAvatar()
@@ -32,6 +32,11 @@ export default function Sidebar({ children, session }: { children: ReactNode, se
       href: "/products",
       label: "Products",
       icon: "material-symbols:featured-seasonal-and-gifts-rounded",
+    },
+    {
+      href: "/categories",
+      label: "Categories",
+      icon: "material-symbols:category-outline-rounded",
     },
     {
       href: "/orders",
@@ -54,6 +59,8 @@ export default function Sidebar({ children, session }: { children: ReactNode, se
       icon: "material-symbols:chat-outline-rounded",
     },
   ]
+
+  const adminRoutes = ["Categories", "Sellers", "Users"]
 
   const paths = links.map(item => ({
     href: item.href,
@@ -93,7 +100,7 @@ export default function Sidebar({ children, session }: { children: ReactNode, se
             {
               links.map((item, key) => {
                 const href = `/dashboard/${role}${item.href}`
-                if (role === "seller" && ["Sellers", "Users"].includes(item.label)) return
+                if (role === "seller" && adminRoutes.includes(item.label)) return
 
                 return (
                   <Link onClick={() => setOpen(false)} href={href} key={key} className={`flex px-5 py-2 items-center gap-3 rounded-full ${pathname === href ? "bg-blue-700 cursor-default" : "active:bg-neutral-700 hover:bg-neutral-700"}`}><Icon fontSize={20} icon={item.icon} />{item.label}</Link>

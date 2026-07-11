@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   icons: "/favicon.ico"
 };
 
-export default async function AdminLayout({ children }: { children: ReactNode }) {
+export default async function SellerLayout({ children }: { children: ReactNode }) {
   const session = await auth()
   const user = session?.user
   await connectDB()

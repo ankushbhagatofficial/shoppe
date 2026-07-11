@@ -6,6 +6,7 @@ import bcrypt from "bcryptjs"
 import { signIn } from "@/lib/auth"
 import User from "@/lib/model/user.model"
 import Seller from "@/lib/model/seller.model"
+import Admin from "@/lib/model/admin.model"
 import { redirect } from "next/navigation"
 
 const schema = z.object({
@@ -28,10 +29,10 @@ export async function loginAction(formData: { email: string, password: string },
     Model = Seller
     redirectPath = "/dashboard/seller"
   }
-  // else if (role === "admin") {
-  //   Model = Admin
-  //   redirectPath = "/dashboard/admin"
-  // }
+  else if (role === "admin") {
+    Model = Admin
+    redirectPath = "/dashboard/admin"
+  }
   else {
     Model = User
     redirectPath = "/"

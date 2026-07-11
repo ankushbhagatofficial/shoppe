@@ -5,9 +5,9 @@ import { useState, useEffect } from "react";
 import { Icon } from "@iconify/react";
 import Error from "@/components/Error"
 import Loading from '@iconify-react/svg-spinners/ring-resize';
-import Profile from "@/components/seller/dashboard/settings/Profile";
-import Account from "@/components/seller/dashboard/settings/Account";
-import Bank from "@/components/seller/dashboard/settings/Bank";
+import Profile from "@/components/dashboard/seller/settings/Profile";
+import Account from "@/components/dashboard/seller/settings/Account";
+import Bank from "@/components/dashboard/seller/settings/Bank";
 import { useSearchParams, useRouter } from "next/navigation";
 
 export default function page() {
@@ -20,7 +20,7 @@ export default function page() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get("/api/get/seller")
+        const res = await axios.get("/api/seller")
         setData(res.data)
       } catch (err) {
         if (axios.isAxiosError(err)) {

@@ -13,8 +13,11 @@ const productSchema = new Schema({
   category: {
     type: Schema.Types.ObjectId,
     ref: "Category",
-    required: true,
-    index: true,
+  },
+
+  customCategory: {
+    type: String,
+    trim: true,
   },
 
   // Information
@@ -36,6 +39,12 @@ const productSchema = new Schema({
     type: String,
   },
 
+  tags: [
+    {
+      type: String
+    }
+  ],
+
   shortDesc: {
     type: String,
     required: true,
@@ -53,14 +62,25 @@ const productSchema = new Schema({
     min: 0,
   },
 
+  mrp: {
+    type: Number,
+    min: 0,
+  },
+
   stock: {
+    type: Number,
+    default: 0,
+  },
+
+  lowStock: {
     type: Number,
     default: 0,
   },
 
   images: [
     {
-      type: String,
+      url: String,
+      publicId: String
     },
   ],
 
@@ -124,6 +144,11 @@ const productSchema = new Schema({
       },
     },
   ],
+
+  published: {
+    type: Boolean,
+    default: false
+  }
 
 },
   {

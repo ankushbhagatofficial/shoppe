@@ -10,7 +10,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { SellerType } from "@/lib/model/seller.model";
 import { AnimatePresence, motion } from "motion/react";
-import AddProduct from "@/components/seller/products/AddProduct";
+import AddProduct from "@/components/dashboard/seller/products/AddProduct";
 
 export default function page() {
   const router = useRouter()
@@ -41,7 +41,7 @@ export default function page() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get("/api/get/seller")
+        const res = await axios.get("/api/seller")
         setData(res.data)
       } catch (err) {
         if (axios.isAxiosError(err)) {

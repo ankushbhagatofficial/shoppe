@@ -58,8 +58,8 @@ function Role({ admin, setStep }: { admin: boolean, setStep: Function }) {
             }
           </div>
           <div>
-            {role === "seller" ?
-              <Link href="/seller/register">
+            {role !== "user" ?
+              <Link href={`/${role}/register`}>
                 <button className="bg-blue-600 select-none w-40 p-2 font-semibold rounded-full cursor-pointer border-2 border-transparent hover:bg-blue-800 hover:border-white active:bg-blue-800 active:border-white transition-all duration-200">
                   Continue
                 </button>
