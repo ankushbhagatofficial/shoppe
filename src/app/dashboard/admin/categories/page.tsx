@@ -23,13 +23,19 @@ export default function page() {
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(10)
+  const [categories, setCategories] = useState<Category[]>([])
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
     total: 0,
     totalPages: 1
   })
-  const [categories, setCategories] = useState<Category[]>([])
+  const [stats, setStats] = useState({
+    total: 0,
+    active: 0,
+    inactive: 0,
+    products: 0
+  })
   const [dataChange, setDataChange] = useState(true)
   const [categoryModal, setCategoryModal] = useState(false)
   const [updateModal, setUpdateModal] = useState({
@@ -42,13 +48,6 @@ export default function page() {
   })
   const [selected, setSelected] = useState(new Set<string>())
 
-  const stats = {
-    length: pagination.total,
-    active: categories.filter(category => category.active).length,
-    inactive: categories.filter(category => !category.active).length,
-    total: categories.reduce((prev, category) => prev + category.productCount, 0)
-  }
-
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true)
@@ -58,6 +57,7 @@ export default function page() {
       if (res.status === 200) {
         setCategories(res.data?.categories)
         setPagination(res.data?.pagination)
+        setStats(res.data?.stats)
         setLoading(false)
       }
     }
@@ -135,7 +135,7 @@ export default function page() {
           </div>
           <div className="flex flex-col">
             <p className="text-xs lg:text-sm text-white/60">Total Categories</p>
-            <h2 className="text-lg font-bold">{stats.length}</h2>
+            <h2 className="text-lg font-bold">{stats.total}</h2>
           </div>
         </div>
 
@@ -155,7 +155,7 @@ export default function page() {
           </div>
           <div className="flex flex-col">
             <p className="text-xs lg:text-sm text-white/60">Total Products</p>
-            <h2 className="text-lg font-bold">{stats.total}</h2>
+            <h2 className="text-lg font-bold">{stats.products}</h2>
           </div>
         </div>
 
@@ -170,7 +170,7 @@ export default function page() {
         </div>
       </div>
 
-      <div className="w-full rounded-lg bg-neutral-800 min-h-[66dvh] h-full">
+      <div className="w-full rounded-lg bg-neutral-800 min-h-[66dvh] h-full overflow-x-auto">
         {selected.size > 0 &&
           <div className="p-4 flex items-center justify-between w-full border-b border-white/20">
             <p className="text-sm font-semibold">{selected.size} selected</p>
@@ -192,7 +192,7 @@ export default function page() {
           :
           <table className="w-full text-left">
             <thead className="">
-              <tr>
+              <tr className="text-sm">
                 <th className="p-4 text-white/60 font-semibold group">
                   <div className="flex gap-2 peer">
                     <input
@@ -209,13 +209,13 @@ export default function page() {
                 <th className="p-4 text-white/60 font-semibold">SLUG</th>
                 <th className="p-4 text-white/60 font-semibold text-center">PRODUCTS</th>
                 <th className="p-4 text-white/60 font-semibold text-center">STATUS</th>
-                <th className="p-4 text-white/60 font-semibold">CREATED AT</th>
+                <th className="text-nowrap p-4 text-white/60 font-semibold">CREATED AT</th>
                 <th className="p-4 text-white/60 font-semibold text-center">ACTIONS</th>
               </tr>
             </thead>
             <tbody>
               {categories?.map((category, index) => (
-                <tr className="border-t border-b border-white/20" key={category.slug}>
+                <tr className="text-sm border-t border-b border-white/20" key={category.slug}>
                   <td className="p-4 group">
                     <div className="flex gap-2">
                       <input

@@ -1,239 +1,251 @@
 "use client"
 
 import axios from "axios";
+import { nanoid } from "nanoid"
 import { Icon } from "@iconify/react"
 import { useState, useEffect, ChangeEvent, SyntheticEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import RichTextEditor from "@/components/tiptap/RichTextEditor";
+import ProductVariant from "./ProductVariant";
+import Toggle from "@/components/ui/toggle";
 
 export default function AddProduct({ closeModal }: { closeModal: Function }) {
-  const categories: string[] = [
-    "Custom",
-    "Electronics",
-    "Mobiles",
-    "Laptops",
-    "Computers",
-    "Computer Accessories",
-    "Tablets",
-    "Smart Watches",
-    "Wearable Devices",
-    "Audio",
-    "Headphones",
-    "Earbuds",
-    "Speakers",
-    "Cameras",
-    "Camera Accessories",
-    "Gaming",
-    "Gaming Consoles",
-    "Gaming Accessories",
-    "Networking",
-    "Storage Devices",
-    "Printers",
-    "Office Electronics",
-    "TV & Entertainment",
-    "Home Appliances",
-    "Kitchen Appliances",
-    "Large Appliances",
-    "Small Appliances",
-    "Furniture",
-    "Home Decor",
-    "Home Improvement",
-    "Lighting",
-    "Bathroom",
-    "Kitchen & Dining",
-    "Cookware",
-    "Bakeware",
-    "Storage & Organization",
-    "Cleaning Supplies",
-    "Garden",
-    "Outdoor Living",
-    "Tools & Hardware",
-    "Fashion",
-    "Men's Clothing",
-    "Women's Clothing",
-    "Kids' Clothing",
-    "Baby Clothing",
-    "Footwear",
-    "Sports Shoes",
-    "Casual Shoes",
-    "Bags",
-    "Wallets",
-    "Luggage",
-    "Jewellery",
-    "Watches",
-    "Sunglasses",
-    "Beauty",
-    "Skin Care",
-    "Hair Care",
-    "Makeup",
-    "Perfumes",
-    "Personal Care",
-    "Health Care",
-    "Medical Supplies",
-    "Nutrition",
-    "Vitamins",
-    "Sports & Fitness",
-    "Gym Equipment",
-    "Yoga",
-    "Cycling",
-    "Running",
-    "Camping",
-    "Hiking",
-    "Cricket",
-    "Football",
-    "Badminton",
-    "Basketball",
-    "Swimming",
-    "Books",
-    "Educational Books",
-    "Comics",
-    "Magazines",
-    "Stationery",
-    "Office Supplies",
-    "School Supplies",
-    "Art & Craft",
-    "Toys",
-    "Educational Toys",
-    "Board Games",
-    "Action Figures",
-    "Baby Products",
-    "Diapers",
-    "Baby Care",
-    "Pet Supplies",
-    "Dog Supplies",
-    "Cat Supplies",
-    "Aquarium",
-    "Bird Supplies",
-    "Groceries",
-    "Beverages",
-    "Snacks",
-    "Food Staples",
-    "Organic Food",
-    "Dairy",
-    "Frozen Foods",
-    "Automotive",
-    "Car Accessories",
-    "Motorcycle Accessories",
-    "Car Care",
-    "Tyres",
-    "Industrial",
-    "Scientific Supplies",
-    "Safety Equipment",
-    "Power Tools",
-    "Hand Tools",
-    "Electrical Supplies",
-    "Building Materials",
-    "Musical Instruments",
-    "Musical Accessories",
-    "Movies",
-    "Music",
-    "Video Games",
-    "Collectibles",
-    "Antiques",
-    "Handmade",
-    "Craft Supplies",
-    "Party Supplies",
-    "Gift Items",
-    "Gift Cards",
-    "Religious Items",
-    "Seasonal Products",
-    "Travel Accessories",
-    "Smart Home",
-    "Security Systems",
-    "Solar Products",
-    "Eco-Friendly Products",
-    "Digital Products",
-    "Software",
-    "Phone Accessories",
-    "Tablet Accessories",
-    "Laptop Accessories",
-    "Drone & Accessories",
-    "3D Printers",
-    "Virtual Reality",
-    "Augmented Reality",
-    "Photography",
-    "Fishing",
-    "Hunting",
-    "Office Furniture",
-    "Commercial Equipment",
-    "Restaurant Supplies",
-    "Salon Supplies",
-    "Medical Equipment",
-    "Laboratory Equipment",
-    "Agriculture",
-    "Seeds & Plants",
-    "Livestock Supplies",
-  ]
+  // const categories: string[] = [
+  //   "Custom",
+  //   "Electronics",
+  //   "Mobiles",
+  //   "Laptops",
+  //   "Computers",
+  //   "Computer Accessories",
+  //   "Tablets",
+  //   "Smart Watches",
+  //   "Wearable Devices",
+  //   "Audio",
+  //   "Headphones",
+  //   "Earbuds",
+  //   "Speakers",
+  //   "Cameras",
+  //   "Camera Accessories",
+  //   "Gaming",
+  //   "Gaming Consoles",
+  //   "Gaming Accessories",
+  //   "Networking",
+  //   "Storage Devices",
+  //   "Printers",
+  //   "Office Electronics",
+  //   "TV & Entertainment",
+  //   "Home Appliances",
+  //   "Kitchen Appliances",
+  //   "Large Appliances",
+  //   "Small Appliances",
+  //   "Furniture",
+  //   "Home Decor",
+  //   "Home Improvement",
+  //   "Lighting",
+  //   "Bathroom",
+  //   "Kitchen & Dining",
+  //   "Cookware",
+  //   "Bakeware",
+  //   "Storage & Organization",
+  //   "Cleaning Supplies",
+  //   "Garden",
+  //   "Outdoor Living",
+  //   "Tools & Hardware",
+  //   "Fashion",
+  //   "Men's Clothing",
+  //   "Women's Clothing",
+  //   "Kids' Clothing",
+  //   "Baby Clothing",
+  //   "Footwear",
+  //   "Sports Shoes",
+  //   "Casual Shoes",
+  //   "Bags",
+  //   "Wallets",
+  //   "Luggage",
+  //   "Jewellery",
+  //   "Watches",
+  //   "Sunglasses",
+  //   "Beauty",
+  //   "Skin Care",
+  //   "Hair Care",
+  //   "Makeup",
+  //   "Perfumes",
+  //   "Personal Care",
+  //   "Health Care",
+  //   "Medical Supplies",
+  //   "Nutrition",
+  //   "Vitamins",
+  //   "Sports & Fitness",
+  //   "Gym Equipment",
+  //   "Yoga",
+  //   "Cycling",
+  //   "Running",
+  //   "Camping",
+  //   "Hiking",
+  //   "Cricket",
+  //   "Football",
+  //   "Badminton",
+  //   "Basketball",
+  //   "Swimming",
+  //   "Books",
+  //   "Educational Books",
+  //   "Comics",
+  //   "Magazines",
+  //   "Stationery",
+  //   "Office Supplies",
+  //   "School Supplies",
+  //   "Art & Craft",
+  //   "Toys",
+  //   "Educational Toys",
+  //   "Board Games",
+  //   "Action Figures",
+  //   "Baby Products",
+  //   "Diapers",
+  //   "Baby Care",
+  //   "Pet Supplies",
+  //   "Dog Supplies",
+  //   "Cat Supplies",
+  //   "Aquarium",
+  //   "Bird Supplies",
+  //   "Groceries",
+  //   "Beverages",
+  //   "Snacks",
+  //   "Food Staples",
+  //   "Organic Food",
+  //   "Dairy",
+  //   "Frozen Foods",
+  //   "Automotive",
+  //   "Car Accessories",
+  //   "Motorcycle Accessories",
+  //   "Car Care",
+  //   "Tyres",
+  //   "Industrial",
+  //   "Scientific Supplies",
+  //   "Safety Equipment",
+  //   "Power Tools",
+  //   "Hand Tools",
+  //   "Electrical Supplies",
+  //   "Building Materials",
+  //   "Musical Instruments",
+  //   "Musical Accessories",
+  //   "Movies",
+  //   "Music",
+  //   "Video Games",
+  //   "Collectibles",
+  //   "Antiques",
+  //   "Handmade",
+  //   "Craft Supplies",
+  //   "Party Supplies",
+  //   "Gift Items",
+  //   "Gift Cards",
+  //   "Religious Items",
+  //   "Seasonal Products",
+  //   "Travel Accessories",
+  //   "Smart Home",
+  //   "Security Systems",
+  //   "Solar Products",
+  //   "Eco-Friendly Products",
+  //   "Digital Products",
+  //   "Software",
+  //   "Phone Accessories",
+  //   "Tablet Accessories",
+  //   "Laptop Accessories",
+  //   "Drone & Accessories",
+  //   "3D Printers",
+  //   "Virtual Reality",
+  //   "Augmented Reality",
+  //   "Photography",
+  //   "Fishing",
+  //   "Hunting",
+  //   "Office Furniture",
+  //   "Commercial Equipment",
+  //   "Restaurant Supplies",
+  //   "Salon Supplies",
+  //   "Medical Equipment",
+  //   "Laboratory Equipment",
+  //   "Agriculture",
+  //   "Seeds & Plants",
+  //   "Livestock Supplies",
+  // ]
 
+  type Variant = {
+    id: string,
+    images:
+    {
+      preview: string,
+      file: File | undefined
+    }[],
+    price: number,
+    salePrice: number,
+    sku: string,
+    stock: number,
+    lowStock: number,
+    description: string,
+  }
+
+  const [categories, setCategories] = useState<string[]>([])
+  const [showCategory, setShowCategory] = useState(false)
+  const [cateorySearch, setCategorySearch] = useState("")
+  const [category, setCategory] = useState("")
   const [submit, setSubmit] = useState(false)
   const [error, setError] = useState("")
   const [fieldErrors, setFieldErrors] = useState<Record<string, string | string[]>>()
-  const [images, setImages] = useState<{
-    file: File,
-    preview: string,
-  }[]>([])
-  const [category, setCategory] = useState("")
-  const [showCategory, setShowCategory] = useState(false)
-  const [search, setSearch] = useState("")
-  const filteredSearch = categories.filter(item => item.toLowerCase().includes(search.toLowerCase()))
+  const filteredSearch = categories.filter(item => item.toLowerCase().includes(cateorySearch.toLowerCase()))
 
   const [tag, setTag] = useState("")
   const [tags, setTags] = useState<string[]>([])
-  const [description, setDescription] = useState("")
+  const [cod, setCod] = useState(true)
+  const [formData, setFormData] = useState({})
+  const emptyVariant: Variant = {
+    id: nanoid(),
+    images: [],
+    price: 0,
+    salePrice: 0,
+    sku: "",
+    stock: 0,
+    lowStock: 0,
+    description: "",
+  }
+  const [variants, setVariants] = useState<Variant[]>([emptyVariant])
+  const [expandVariant, setExpandVariant] = useState(emptyVariant.id)
 
   useEffect(() => {
+    const fetchData = async () => {
+      const res = await axios.get("/api/categories")
+      setCategories(res.data)
+    }
+    fetchData()
 
   }, [])
 
-  const handleImages = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files ?? [])
-
-    if (files.length > 0) {
-      const newImages = files.slice(0, 10 - images.length).map((file: File) => ({
-        file,
-        preview: URL.createObjectURL(file)
-      }))
-      setImages(prev => ([...prev, ...newImages]))
-    }
-
-    if (images.length > 10) {
-      return setFieldErrors(prev => ({
-        ...prev,
-        images: "You can upload a maximum of 10 images."
-      }))
-    }
+  const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value
+    }))
   }
 
-
-  const changeImage = (e: ChangeEvent<HTMLInputElement>, index: number) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    setImages(prev => {
-      const updated = [...prev]
-      updated[index] = {
-        file,
-        preview: URL.createObjectURL(file)
-      }
-      return updated
-    })
-
-    e.target.value = ""
-
+  const handleVariantChange = (index: number, updatedVariant: Variant) => {
+    setVariants(prev =>
+      prev.map((variant, i) =>
+        i === index ? updatedVariant : variant
+      )
+    )
   }
 
   const handleShortDesc = (e: SyntheticEvent<HTMLTextAreaElement>) => {
     const target = e.currentTarget
-    // setFormData({
-    //   [target.name]: target.value
-    // })
+    setFormData(prev => ({
+      ...prev,
+      [target.name]: target.value
+    }))
     const sibling = target.nextElementSibling
     if (sibling) sibling.textContent = `${target.value.length}/${target.maxLength}`
   }
 
   function selectCategory(value: string) {
     setCategory(value);
-    setSearch("");
+    setCategorySearch("");
     setShowCategory(false);
   }
 
@@ -277,41 +289,6 @@ export default function AddProduct({ closeModal }: { closeModal: Function }) {
         <div className="flex flex-col border border-white/20 rounded-lg p-5 gap-4 overflow-y-auto">
 
           <div className="flex flex-col gap-4">
-            <label className="font-bold">Product Images</label>
-            <label className="">
-              <input disabled={images.length >= 10} onChange={handleImages} className="peer hidden w-full" multiple type="file" accept="image/*" />
-              <div className={`h-50 border-dashed border-2 border-white/20 cursor-pointer rounded flex justify-center items-center peer-disabled:opacity-50 peer-disabled:cursor-not-allowed`}>
-                <div className="flex flex-col justify-center items-center gap-4">
-                  <div className="flex flex-col justify-center items-center">
-                    <Icon fontSize={50} icon="mdi:cloud-upload-outline" />
-                    <p className="font-semibold">Drag and drop images</p>
-                    <p className="font-semibold">or <span className="text-blue-500">browse</span></p>
-                  </div>
-                  <div className="flex flex-col text-xs text-white/60 justify-center items-center">
-                    <p>Recommened Size: 800x800</p>
-                    <p>Max 10 Images</p>
-                  </div>
-                </div>
-              </div>
-            </label>
-            {images.length > 0 &&
-              <div className="flex w-full py-4 overflow-x-auto gap-4">
-                {images.slice(0, 10).map((image, index) => (
-                  <div key={index} className="relative select-none shrink-0 flex w-30 h-30 bg-neutral-700 rounded">
-                    <Icon onClick={() => setImages(images.filter((_, i) => i !== index))} className="absolute -right-2 -top-2 bg-neutral-700 hover:bg-neutral-900 p-0.5 rounded-full" fontSize={20} icon="mdi:remove" />
-                    <label className="cursor-pointer">
-                      <input onChange={(e) => changeImage(e, index)} className="hidden w-full" type="file" accept="image/*" />
-                      <img className="object-contain h-full w-full" src={image.preview} alt={image.file.name} />
-                    </label>
-                    <p className="absolute left-1 bottom-1 text-xs text-white/60">{index + 1}</p>
-                  </div>
-                ))}
-
-              </div>}
-
-          </div>
-
-          <div className="flex flex-col gap-4">
             <label className="font-bold">Product Information</label>
 
             <div className="flex flex-col gap-4 md:flex-row md:gap-10">
@@ -328,10 +305,13 @@ export default function AddProduct({ closeModal }: { closeModal: Function }) {
             </div>
 
             <div className="flex flex-col gap-4 md:flex-row md:gap-10">
-              <div className="flex flex-col gap-2 w-full">
-                <label className="font-semibold text-sm">Slug</label>
-                <input className="rounded p-1 px-2 w-full outline-0 border-2 border-white/20 focus:border-white/80 text-sm h-10" type="text" name="slug" />
-                {fieldErrors?.slug && <span className="mt-1 text-xs text-red-500">{fieldErrors?.slug}</span>}
+              <div className="flex flex-col w-full">
+                <div className="flex flex-col w-full gap-2">
+                  <label className="font-semibold text-sm">Select Category <span className="text-red-500">*</span></label>
+                  <div className="flex flex-col gap-4">
+                    <input onClick={() => setShowCategory(true)} readOnly className="rounded p-1 px-2 w-full outline-0 border-2 border-white/20 focus:border-white/80 text-sm h-10" value={category} type="text" name="category" placeholder="Select Product Category" />
+                  </div>
+                </div>
               </div>
 
               <div className="flex flex-col gap-2 w-full">
@@ -352,129 +332,108 @@ export default function AddProduct({ closeModal }: { closeModal: Function }) {
               </div>
             </div>
 
-            <div className="flex flex-col gap-4 md:flex-row md:gap-10">
-              <div className="flex flex-col w-full">
-                <div className="flex flex-col w-full gap-2">
-                  <label className="font-semibold text-sm">Select Category <span className="text-red-500">*</span></label>
-                  <div className="flex flex-col gap-4">
-                    <input onClick={() => setShowCategory(true)} readOnly className="rounded p-1 px-2 w-full outline-0 border-2 border-white/20 focus:border-white/80 text-sm h-10" value={category} type="text" name="category" placeholder="Select Product Category" />
-                    {showCategory &&
-                      <div className="flex flex-col gap-4 bg-neutral-700/50 w-full rounded-md p-5">
-                        <div>
-                          <input type="text" autoFocus
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                            placeholder="Search category..."
-                            className="w-full border rounded  outline-0 px-3 py-1" />
-                        </div>
+            {showCategory &&
+              <div className="flex flex-col gap-4 bg-neutral-700/50 w-full rounded-md p-5">
+                <div>
+                  <input type="text" autoFocus
+                    value={cateorySearch}
+                    onChange={(e) => setCategorySearch(e.target.value)}
+                    placeholder="Search category..."
+                    className="w-full border rounded text-sm h-10 outline-0 px-3 py-1" />
+                </div>
 
-                        <div className="flex flex-col h-52 border border-white/20 rounded p-2 overflow-y-auto">
-                          {filteredSearch.map((item, index) => (
-                            <button key={index} onClick={() => selectCategory(item)} type="button" className="text-left rounded my-1 p-1 px-2 hover:bg-blue-500">{item}</button>
-                          ))
-                          }
-                          {filteredSearch.length === 0 &&
-                            <p className="text-sm font-semibold text-center">No Category Found</p>
-                          }
-                        </div>
-                      </div>
-                    }
-                  </div>
-                  {category == "Custom" &&
-                    <div className="flex flex-col w-full gap-2">
-                      <label className="font-semibold text-sm">Custom Category</label>
-                      <input className="rounded p-1 px-2 w-full outline-0 border-2 border-white/20 focus:border-white/80 text-sm h-10" placeholder="Enter Custom Category" type="text" name="customCategory" />
-                    </div>
+                <div className="flex flex-col h-52 border border-white/20 rounded p-2 overflow-y-auto">
+                  {filteredSearch.map((item, index) => (
+                    <button key={index}
+                      type="button"
+                      onClick={() => selectCategory(item)}
+                      className="text-left text-sm cursor-pointer rounded my-1 p-1 px-2 hover:bg-blue-500">{item}
+                    </button>
+                  ))
+                  }
+                  {filteredSearch.length === 0 &&
+                    <p className="text-sm font-semibold text-center">No Category Found</p>
                   }
                 </div>
               </div>
+            }
 
-              <div className="flex flex-col w-full gap-2">
-                <label className="font-semibold text-sm">Short Description</label>
-                <div className="relative">
-                  <textarea maxLength={200} onChange={handleShortDesc} rows={6} className="rounded p-1 px-2 w-full outline-0 border-2 border-white/20 focus:border-white/80 text-sm min-h-20 max-h-fit" placeholder="Briefly describe your product..." name="shortDesc" />
-                  <p className="absolute bottom-3 right-3 text-xs font-semibold">{"0/200"}</p>
-                </div>
-                {fieldErrors?.shortDesc && <span className="mt-1 text-xs text-red-500">{fieldErrors?.shortDesc}</span>}
+
+            <div className="flex flex-col w-full gap-2">
+              <label className="font-semibold text-sm">Short Description</label>
+              <div className="relative">
+                <textarea maxLength={200} onChange={handleShortDesc} rows={6} className="rounded p-1 px-2 w-full outline-0 border-2 border-white/20 focus:border-white/80 text-sm min-h-20 max-h-fit" placeholder="Briefly describe your product..." name="shortDesc" />
+                <p className="absolute bottom-3 right-3 text-xs font-semibold">{"0/200"}</p>
               </div>
+              {fieldErrors?.shortDesc && <span className="mt-1 text-xs text-red-500">{fieldErrors?.shortDesc}</span>}
             </div>
-
           </div>
 
-          <div className="flex flex-col gap-4 md:flex-row md:gap-10">
-
-            <div className="flex flex-col gap-4">
-              <label className="font-bold flex gap-2 items-center">
-                <Icon fontSize={20} className="text-green-400" icon="mdi:tag-outline" />
-                Pricing
-              </label>
-
-              <div className="flex flex-col gap-4 md:flex-row md:gap-10">
-                <div className="flex flex-col w-full gap-2">
-                  <label className="font-semibold text-sm">Price <span className="text-red-500">*</span></label>
-                  <div className="flex items-center border-2 border-white/20 focus-within:border-white/80 rounded px-1 h-10">
-                    <Icon fontSize={16} icon="material-symbols:currency-rupee-rounded" />
-                    <input min={49} className="outline-0 px-2 w-full text-sm" placeholder="Enter Price" type="number" name="price" required />
-                  </div>
-                  {fieldErrors?.price && <span className="mt-1 text-xs text-red-500">{fieldErrors?.price}</span>}
-                </div>
-                <div className="flex flex-col w-full gap-2">
-                  <label className="font-semibold text-sm">M.R.P</label>
-                  <div className="flex items-center border-2 border-white/20 focus-within:border-white/80 rounded px-1 h-10">
-                    <Icon fontSize={16} icon="material-symbols:currency-rupee-rounded" />
-                    <input min={49} className="outline-0 px-2 w-full text-sm" placeholder="Enter MRP" type="number" name="mrp" />
-                  </div>
-                  {fieldErrors?.mrp && <span className="mt-1 text-xs text-red-500">{fieldErrors?.mrp}</span>}
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-4">
-              <label className="font-bold flex gap-2 items-center">
-                <Icon fontSize={20} className="text-blue-400" icon="mdi:cube-outline" />
-                Inventory
-              </label>
-
-              <div className="flex flex-col gap-4 md:flex-row md:gap-10">
-                <div className="flex flex-col w-full gap-2">
-                  <label className="font-semibold text-sm">Stock <span className="text-red-500">*</span></label>
-                  <div className="flex items-center border-2 border-white/20 focus-within:border-white/80 rounded px-1 h-10">
-                    <input min={1} className="outline-0 px-2 w-full text-sm" placeholder="Available Stock" type="number" name="stock" required />
-                  </div>
-                  {fieldErrors?.stock && <span className="mt-1 text-xs text-red-500">{fieldErrors?.stock}</span>}
-                </div>
-                <div className="flex flex-col w-full gap-2">
-                  <label className="font-semibold text-sm">Low Stock Alert <span className="text-red-500">*</span></label>
-                  <div className="flex items-center border-2 border-white/20 focus-within:border-white/80 rounded px-1 h-10">
-                    <input min={0} defaultValue={5} className="outline-0 px-2 w-full text-sm" placeholder="Enter MRP" type="number" name="lowStock" required />
-                  </div>
-                  {fieldErrors?.lowStock && <span className="mt-1 text-xs text-red-500">{fieldErrors?.lowStock}</span>}
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <label className="font-bold flex gap-2 items-center">
-              <Icon fontSize={20} className="text-yellow-400" icon="mdi:text" />
-              Description
-            </label>
-            <RichTextEditor value={description} onChange={setDescription} />
-            {fieldErrors?.description && <span className="mt-1 text-xs text-red-500">{fieldErrors?.description}</span>}
+          <div className="flex gap-2">
+            <Toggle onChange={setCod} defaultChecked />
+            <span className="text-sm font-semibold">Cash On Delivery</span>
           </div>
 
           {/* <div className="prose dark:prose-invert max-w-none" */}
           {/*   dangerouslySetInnerHTML={{ __html: description }} */}
           {/* /> */}
+
+
+          <div className="">
+            {variants.map((variant, index) => (
+              <div key={index} className="flex flex-col pt-4">
+                {variants.length > 0 &&
+                  <div className="flex flex-col gap-4 py-4 border-t-2 border-white/20">
+                    <div className="flex justify-between w-full gap-4">
+                      <button className="flex items-center gap-2 cursor-pointer" onClick={() => setExpandVariant(variant.id)} type="button">
+                        <Icon className={`transition-all duration-75 ${expandVariant === variant.id && "rotate-90"}`} fontSize={20} icon="line-md:chevron-small-right" />
+                        <span className="font-bold text-nowrap">Varaint #{index + 1}</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setVariants(variants.filter((_, i) => i !== index))
+                        }}
+                        className="flex cursor-pointer p-2 px-3 gap-2 text-sm font-semibold items-center rounded bg-red-500" >
+                        <Icon fontSize={16} icon="line-md:trash" />
+                      </button>
+
+                    </div>
+
+                    {expandVariant === variant.id &&
+                      <div>
+                        <ProductVariant
+                          index={index}
+                          variant={variant}
+                          setVariant={(v) => handleVariantChange(index, v)} />
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            ))}
+          </div>
+
         </div>
 
         <div className="flex gap-4 w-full justify-end select-none">
+          <button
+            onClick={() => {
+              const newVariant = emptyVariant
+              setVariants(prev => ([...prev, newVariant]))
+              setExpandVariant(newVariant.id)
+            }}
+            className="flex mr-auto gap-1 leading-5 text-xs p-2 px-3 font-semibold bg-green-800 text-green-400 rounded-md cursor-pointer"
+            type="button">
+            <Icon fontSize={20} icon="material-symbols:add-rounded" />
+            Add Variant
+          </button>
           <button className="text-xs cursor-pointer active:scale-95 duration-200 border bg-white text-black py-2 px-4 font-semibold rounded-md" type="button">Save Draft</button>
           <button className="text-xs cursor-pointer active:scale-95 duration-200 bg-blue-700  px-4 font-semibold rounded-md" type="submit">Publish Product</button>
         </div>
-      </form>
-    </div>
+      </form >
+    </div >
   )
 }
 

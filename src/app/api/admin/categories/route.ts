@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import Admin from "@/lib/model/admin.model";
 import Category from "@/lib/model/category.model";
+import Product from "@/lib/model/product.model";
 import connectDB from "@/lib/mongodb"
 
 export async function GET(req: Request) {
@@ -21,13 +22,16 @@ export async function GET(req: Request) {
     const limit = Math.max(1, Number(params.get("limit")) || 10)
     const skip = (page - 1) * limit
 
-    const [categories, total] = await Promise.all([
-      Category.find()
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit),
+    const categories = await Category.find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
 
-      Category.countDocuments()
+    const [total, active, inactive, products] = await Promise.all([
+      Category.countDocuments(),
+      Category.countDocuments({ active: true }),
+      Category.countDocuments({ active: false }),
+      Product.countDocuments(),
     ])
 
     return Response.json({
@@ -37,6 +41,12 @@ export async function GET(req: Request) {
         limit,
         total,
         totalPages: Math.ceil(total / limit)
+      },
+      stats: {
+        total,
+        active,
+        inactive,
+        products
       }
     })
 

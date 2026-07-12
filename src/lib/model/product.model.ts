@@ -1,5 +1,85 @@
 import { InferSchemaType, model, models, Schema } from "mongoose";
 
+const variantSchema = new Schema({
+  attributes: [
+    {
+      name: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+      value: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+    }
+  ],
+
+  specs: [
+    {
+      name: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+      value: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+    }
+  ],
+
+  sku: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+
+  shortDesc: {
+    type: String,
+    required: true,
+  },
+
+  description: {
+    type: String,
+    required: true,
+  },
+
+  // Pricing
+  price: {
+    type: Number,
+    required: true,
+    min: 0,
+  },
+
+  salePrice: {
+    type: Number,
+    min: 0,
+  },
+
+  stock: {
+    type: Number,
+    default: 0,
+  },
+
+  lowStock: {
+    type: Number,
+    default: 0,
+  },
+
+  weight: Number,
+
+  images: [
+    {
+      url: String,
+      publicId: String
+    },
+  ],
+
+}, { _id: true })
+
 const productSchema = new Schema({
   // Seller
   seller: {
@@ -7,17 +87,6 @@ const productSchema = new Schema({
     ref: "Seller",
     required: true,
     index: true,
-  },
-
-  // Category
-  category: {
-    type: Schema.Types.ObjectId,
-    ref: "Category",
-  },
-
-  customCategory: {
-    type: String,
-    trim: true,
   },
 
   // Information
@@ -39,55 +108,30 @@ const productSchema = new Schema({
     type: String,
   },
 
+  category: {
+    type: Schema.Types.ObjectId,
+    ref: "Category",
+  },
+
   tags: [
     {
       type: String
     }
   ],
 
-  shortDesc: {
-    type: String,
-    required: true,
+  variants: {
+    type: [variantSchema],
   },
 
-  description: {
-    type: String,
-    required: true,
+  cod: {
+    type: Boolean,
+    default: true,
   },
-
-  // Pricing
-  price: {
-    type: Number,
-    required: true,
-    min: 0,
-  },
-
-  mrp: {
-    type: Number,
-    min: 0,
-  },
-
-  stock: {
-    type: Number,
-    default: 0,
-  },
-
-  lowStock: {
-    type: Number,
-    default: 0,
-  },
-
-  images: [
-    {
-      url: String,
-      publicId: String
-    },
-  ],
 
   // Status
   status: {
     type: String,
-    enum: ["draft", "active", "archived"],
+    enum: ["draft", "active"],
     default: "draft",
   },
 
@@ -102,8 +146,8 @@ const productSchema = new Schema({
     default: 0,
   },
 
-  // Comments
-  comments: [
+  // Review
+  review: [
     {
       user: {
         type: Schema.Types.ObjectId,
@@ -144,11 +188,6 @@ const productSchema = new Schema({
       },
     },
   ],
-
-  published: {
-    type: Boolean,
-    default: false
-  }
 
 },
   {

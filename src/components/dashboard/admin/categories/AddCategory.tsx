@@ -5,6 +5,7 @@ import { Icon } from "@iconify/react"
 import { SyntheticEvent, useState } from "react"
 import Loading from '@iconify-react/svg-spinners/ring-resize';
 import { AnimatePresence, motion } from "motion/react"
+import Toggle from "@/components/ui/toggle";
 
 export default function AddCategory({ onClose, onSuccess }: { onClose: Function, onSuccess: Function }) {
   const [category, setCategory] = useState("")
@@ -63,10 +64,7 @@ export default function AddCategory({ onClose, onSuccess }: { onClose: Function,
         <div className="flex flex-col w-full gap-2">
           <label className="font-semibold text-sm">Status</label>
           <div className="flex gap-2 items-center">
-            <label className="flex">
-              <input onChange={(e) => setActive(e.target.checked)} defaultChecked className="hidden peer rounded outline-0 border-2 border-white/20 focus:border-white/80 text-sm h-10" type="checkbox" name="active" />
-              <div className="relative p-0.5 transition-all duration-100 ease-linear flex items-center w-10 h-5 rounded-full bg-neutral-700 after:content-[''] after:size-4 after:left-0.6 after:bg-white after:rounded-full after:absolute peer-checked:after:translate-x-5 peer-checked:bg-blue-600 after:transition-all after:duration-100 after:ease-linear"></div>
-            </label>
+            <Toggle onChange={setActive} defaultChecked />
             <span className="font-semibold text-sm">Active</span>
           </div>
           <p className="text-xs text-white/60">Inactive categories will not visible in the store.</p>
