@@ -6,6 +6,7 @@ import { SyntheticEvent, useState } from "react"
 import Loading from '@iconify-react/svg-spinners/ring-resize';
 import { AnimatePresence, motion } from "motion/react"
 import Toggle from "@/components/ui/toggle";
+import ErrorMessage from "@/components/ui/validation/error";
 
 export default function AddCategory({ onClose, onSuccess }: { onClose: Function, onSuccess: Function }) {
   const [category, setCategory] = useState("")
@@ -51,30 +52,30 @@ export default function AddCategory({ onClose, onSuccess }: { onClose: Function,
           <label className="font-semibold text-sm">Category Name <span className="text-red-500">*</span></label>
           <input autoFocus onChange={(e) => setCategory(e.target.value)} className="rounded p-1 px-2 w-full outline-0 border-2 border-white/20 focus:border-white/80 text-sm h-10" placeholder="e.g. Electronics" type="text" name="name" required />
           <p className="text-xs text-white/60">This is the name that will displayed to users.</p>
-          {fieldErrors?.category && <span className="mt-1 text-xs text-red-500">{fieldErrors?.category}</span>}
+          <ErrorMessage message={fieldErrors?.category} />
         </div>
 
         <div className="flex flex-col w-full gap-2">
           <label className="font-semibold text-sm">Slug <span className="text-red-500">*</span></label>
           <input onChange={(e) => setSlug(e.target.value)} className="rounded p-1 px-2 w-full outline-0 border-2 border-white/20 focus:border-white/80 text-sm h-10" placeholder="e.g. electronics" type="text" name="slug" required />
           <p className="text-xs text-white/60">URL-friendly version of the name. Lowercase letters, numbers and hyphens only.</p>
-          {fieldErrors?.slug && <span className="mt-1 text-xs text-red-500">{fieldErrors?.slug}</span>}
+          <ErrorMessage message={fieldErrors?.slug} />
         </div>
 
         <div className="flex flex-col w-full gap-2">
           <label className="font-semibold text-sm">Status</label>
           <div className="flex gap-2 items-center">
-            <Toggle onChange={setActive} defaultChecked />
+            <Toggle onChange={setActive} />
             <span className="font-semibold text-sm">Active</span>
           </div>
           <p className="text-xs text-white/60">Inactive categories will not visible in the store.</p>
-          {fieldErrors?.slug && <span className="mt-1 text-xs text-red-500">{fieldErrors?.slug}</span>}
+          <ErrorMessage message={fieldErrors?.active} />
         </div>
 
         <AnimatePresence>
           {error &&
             <motion.div exit={{ opacity: 0, scale: 0 }} initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.1 }}>
-              <p className="text-xs text-red-500">{error}</p>
+              <ErrorMessage message={error} />
             </motion.div>
           }
         </AnimatePresence>

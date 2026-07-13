@@ -75,7 +75,7 @@ export default function UpdateCategory({ category, onClose, onSuccess }: { categ
         <div className="flex flex-col w-full gap-2">
           <label className="font-semibold text-sm">Status</label>
           <div className="flex gap-2 items-center">
-            <Toggle onChange={setActive} defaultChecked />
+            <Toggle onChange={setActive} defaultChecked={category?.active} />
             <span className="font-semibold text-sm">Active</span>
           </div>
           <p className="text-xs text-white/60">Inactive categories will not visible in the store.</p>

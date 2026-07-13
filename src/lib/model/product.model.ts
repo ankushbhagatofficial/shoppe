@@ -64,11 +64,6 @@ const variantSchema = new Schema({
     default: 0,
   },
 
-  lowStock: {
-    type: Number,
-    default: 0,
-  },
-
   weight: Number,
 
   images: [

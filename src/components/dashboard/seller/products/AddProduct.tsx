@@ -7,6 +7,8 @@ import { useState, useEffect, ChangeEvent, SyntheticEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import ProductVariant from "./ProductVariant";
 import Toggle from "@/components/ui/toggle";
+import ErrorMessage from "@/components/ui/validation/error";
+import RichTextEditor from "@/components/tiptap/RichTextEditor";
 
 export default function AddProduct({ closeModal }: { closeModal: Function }) {
   // const categories: string[] = [
@@ -171,15 +173,22 @@ export default function AddProduct({ closeModal }: { closeModal: Function }) {
     id: string,
     images:
     {
+      url?: string,
+      publicId?: string,
+      uploading: boolean,
       preview: string,
-      file: File | undefined
     }[],
     price: number,
     salePrice: number,
     sku: string,
     stock: number,
-    lowStock: number,
-    description: string,
+    color: string,
+    optionType: string,
+    optionValue: string
+  }
+
+  type FieldErrors = Record<string, string | string[]> & {
+    variants: Record<string, string | string[]>[]
   }
 
   const [categories, setCategories] = useState<string[]>([])
@@ -188,13 +197,14 @@ export default function AddProduct({ closeModal }: { closeModal: Function }) {
   const [category, setCategory] = useState("")
   const [submit, setSubmit] = useState(false)
   const [error, setError] = useState("")
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string | string[]>>()
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>()
   const filteredSearch = categories.filter(item => item.toLowerCase().includes(cateorySearch.toLowerCase()))
 
   const [tag, setTag] = useState("")
   const [tags, setTags] = useState<string[]>([])
   const [cod, setCod] = useState(true)
-  const [formData, setFormData] = useState({})
+  const [description, setDescription] = useState("")
+  const [data, setData] = useState({})
   const emptyVariant: Variant = {
     id: nanoid(),
     images: [],
@@ -202,8 +212,9 @@ export default function AddProduct({ closeModal }: { closeModal: Function }) {
     salePrice: 0,
     sku: "",
     stock: 0,
-    lowStock: 0,
-    description: "",
+    color: "",
+    optionType: "",
+    optionValue: ""
   }
   const [variants, setVariants] = useState<Variant[]>([emptyVariant])
   const [expandVariant, setExpandVariant] = useState(emptyVariant.id)
@@ -219,23 +230,26 @@ export default function AddProduct({ closeModal }: { closeModal: Function }) {
 
   const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target
-    setFormData(prev => ({
+    setData(prev => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value
     }))
   }
 
-  const handleVariantChange = (index: number, updatedVariant: Variant) => {
+  const handleVariantChange = (
+    index: number,
+    updater: Variant | ((prev: Variant) => Variant)) => {
     setVariants(prev =>
-      prev.map((variant, i) =>
-        i === index ? updatedVariant : variant
-      )
+      prev.map((variant, i) => {
+        if (i !== index) return variant
+        return typeof updater === "function" ? updater(variant) : updater
+      })
     )
   }
 
   const handleShortDesc = (e: SyntheticEvent<HTMLTextAreaElement>) => {
     const target = e.currentTarget
-    setFormData(prev => ({
+    setData(prev => ({
       ...prev,
       [target.name]: target.value
     }))
@@ -260,8 +274,18 @@ export default function AddProduct({ closeModal }: { closeModal: Function }) {
   const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault()
     setSubmit(true)
+    console.log(data, cod, tags, category);
+    console.log(description)
+    console.log(variants);
+
+    const formData = new FormData()
+    formData.append("data", JSON.stringify({
+      ...data, tags, category, description, cod,
+    }))
+    formData.append("variants", JSON.stringify(variants))
+
     try {
-      const res = await axios.post("/api/seller/products", {})
+      const res = await axios.post("/api/seller/products", formData)
       if (res.status === 200) {
       }
     } catch (error) {
@@ -294,13 +318,13 @@ export default function AddProduct({ closeModal }: { closeModal: Function }) {
             <div className="flex flex-col gap-4 md:flex-row md:gap-10">
               <div className="flex flex-col w-full gap-2">
                 <label className="font-semibold text-sm">Product Name <span className="text-red-500">*</span></label>
-                <input className="rounded p-1 px-2 w-full outline-0 border-2 border-white/20 focus:border-white/80 text-sm h-10" placeholder="Enter Product Name" type="text" name="name" required />
-                {fieldErrors?.name && <span className="mt-1 text-xs text-red-500">{fieldErrors?.name}</span>}
+                <input onChange={handleOnChange} className="rounded p-1 px-2 w-full outline-0 border-2 border-white/20 focus:border-white/80 text-sm h-10" placeholder="Enter Product Name" type="text" name="name" required />
+                <ErrorMessage message={fieldErrors?.name} />
               </div>
               <div className="flex flex-col w-full gap-2">
                 <label className="font-semibold text-sm">Brand Name</label>
-                <input className="rounded p-1 px-2 w-full outline-0 border-2 border-white/20 focus:border-white/80 text-sm h-10" placeholder="Enter Brand Name" type="text" name="brand" />
-                {fieldErrors?.brand && <span className="mt-1 text-xs text-red-500">{fieldErrors?.brand}</span>}
+                <input onChange={handleOnChange} className="rounded p-1 px-2 w-full outline-0 border-2 border-white/20 focus:border-white/80 text-sm h-10" placeholder="Enter Brand Name" type="text" name="brand" />
+                <ErrorMessage message={fieldErrors?.brand} />
               </div>
             </div>
 
@@ -311,13 +335,14 @@ export default function AddProduct({ closeModal }: { closeModal: Function }) {
                   <div className="flex flex-col gap-4">
                     <input onClick={() => setShowCategory(true)} readOnly className="rounded p-1 px-2 w-full outline-0 border-2 border-white/20 focus:border-white/80 text-sm h-10" value={category} type="text" name="category" placeholder="Select Product Category" />
                   </div>
+                  <ErrorMessage message={fieldErrors?.category} />
                 </div>
               </div>
 
               <div className="flex flex-col gap-2 w-full">
                 <label className="font-semibold text-sm">Tags</label>
-                <input onChange={(e) => setTag(e.target.value)} onKeyDown={handleTag} placeholder="Type a tag" value={tag}
-                  className="rounded px-3 py-1 outline-0 border-2 border-white/20 focus:border-white/80 text-sm h-10" type="text" name="tags" />
+                <input onChange={(e) => setTag(e.target.value)} onKeyDown={handleTag} placeholder="Add a tag (press Enter)" value={tag}
+                  className="rounded px-2 py-1 outline-0 border-2 border-white/20 focus:border-white/80 text-sm h-10" type="text" name="tags" />
                 <div className="flex gap-2 flex-wrap">
                   {tags.map((item, index) => (
                     <span className="flex gap-2 text-sm rounded-full pl-3 p-0.5 bg-neutral-700" key={index}>{item}
@@ -329,6 +354,7 @@ export default function AddProduct({ closeModal }: { closeModal: Function }) {
                     </span>
                   ))}
                 </div>
+                <ErrorMessage message={fieldErrors?.tags} />
               </div>
             </div>
 
@@ -365,8 +391,17 @@ export default function AddProduct({ closeModal }: { closeModal: Function }) {
                 <textarea maxLength={200} onChange={handleShortDesc} rows={6} className="rounded p-1 px-2 w-full outline-0 border-2 border-white/20 focus:border-white/80 text-sm min-h-20 max-h-fit" placeholder="Briefly describe your product..." name="shortDesc" />
                 <p className="absolute bottom-3 right-3 text-xs font-semibold">{"0/200"}</p>
               </div>
-              {fieldErrors?.shortDesc && <span className="mt-1 text-xs text-red-500">{fieldErrors?.shortDesc}</span>}
+              <ErrorMessage message={fieldErrors?.shortDesc} />
             </div>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="font-bold flex gap-2 items-center">
+              <Icon fontSize={20} className="text-yellow-400" icon="mdi:text" />
+              Description
+            </label>
+            <RichTextEditor value={description} onChange={setDescription} />
+            {fieldErrors?.description && <span className="mt-1 text-xs text-red-500">{fieldErrors?.description}</span>}
           </div>
 
           <div className="flex gap-2">
@@ -381,13 +416,13 @@ export default function AddProduct({ closeModal }: { closeModal: Function }) {
 
           <div className="">
             {variants.map((variant, index) => (
-              <div key={index} className="flex flex-col pt-4">
+              <div key={index} className="flex flex-col ">
                 {variants.length > 0 &&
-                  <div className="flex flex-col gap-4 py-4 border-t-2 border-white/20">
-                    <div className="flex justify-between w-full gap-4">
-                      <button className="flex items-center gap-2 cursor-pointer" onClick={() => setExpandVariant(variant.id)} type="button">
+                  <div className="flex flex-col ">
+                    <div className="flex justify-between w-full gap-4 p-2 my-2 bg-neutral-700/50 rounded">
+                      <button className="flex w-full items-center gap-2 cursor-pointer" onClick={() => setExpandVariant(variant.id)} type="button">
                         <Icon className={`transition-all duration-75 ${expandVariant === variant.id && "rotate-90"}`} fontSize={20} icon="line-md:chevron-small-right" />
-                        <span className="font-bold text-nowrap">Varaint #{index + 1}</span>
+                        <span className="font-bold text-nowrap">Variant  #{index + 1}</span>
                       </button>
 
                       <button
@@ -402,10 +437,11 @@ export default function AddProduct({ closeModal }: { closeModal: Function }) {
                     </div>
 
                     {expandVariant === variant.id &&
-                      <div>
+                      <div className="my-4">
                         <ProductVariant
                           index={index}
                           variant={variant}
+                          fieldErrors={fieldErrors?.variants?.[index]}
                           setVariant={(v) => handleVariantChange(index, v)} />
                       </div>
                     }
@@ -417,20 +453,20 @@ export default function AddProduct({ closeModal }: { closeModal: Function }) {
 
         </div>
 
-        <div className="flex gap-4 w-full justify-end select-none">
+        <div className="flex flex-wrap gap-4 w-full md:justify-end select-none">
           <button
             onClick={() => {
               const newVariant = emptyVariant
               setVariants(prev => ([...prev, newVariant]))
               setExpandVariant(newVariant.id)
             }}
-            className="flex mr-auto gap-1 leading-5 text-xs p-2 px-3 font-semibold bg-green-800 text-green-400 rounded-md cursor-pointer"
+            className="flex mr-auto text-nowrap gap-1 leading-5 text-xs p-2 px-3 font-semibold bg-green-800 text-green-400 rounded-md cursor-pointer"
             type="button">
             <Icon fontSize={20} icon="material-symbols:add-rounded" />
             Add Variant
           </button>
-          <button className="text-xs cursor-pointer active:scale-95 duration-200 border bg-white text-black py-2 px-4 font-semibold rounded-md" type="button">Save Draft</button>
-          <button className="text-xs cursor-pointer active:scale-95 duration-200 bg-blue-700  px-4 font-semibold rounded-md" type="submit">Publish Product</button>
+          <button className="text-xs text-nowrap cursor-pointer active:scale-95 duration-200 border bg-white text-black py-2 px-4 font-semibold rounded-md" type="button">Save Draft</button>
+          <button className="text-xs text-nowrap cursor-pointer active:scale-95 duration-200 bg-blue-700  px-4 font-semibold rounded-md" type="submit">Publish</button>
         </div>
       </form >
     </div >

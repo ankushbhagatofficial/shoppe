@@ -3,10 +3,8 @@
 import { useEditor, EditorContent, useEditorState } from "@tiptap/react";
 import { BubbleMenu, FloatingMenu } from "@tiptap/react/menus";
 import StarterKit from "@tiptap/starter-kit";
-import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
 import TextAlign from "@tiptap/extension-text-align";
-import Blockquote from '@tiptap/extension-blockquote'
 import Highlight from "@tiptap/extension-highlight";
 import FormatBoldIcon from '@iconify-react/mdi/format-bold';
 import FormatItalicIcon from '@iconify-react/mdi/format-italic';
