@@ -4,6 +4,7 @@ import Loading from '@iconify-react/svg-spinners/ring-resize';
 import ErrorMessage from "@/components/ui/validation/error"
 import { Icon } from "@iconify/react"
 import { ChangeEvent, Dispatch, SetStateAction, useState } from "react"
+import axios from 'axios';
 
 type Variant = {
   id: string,
@@ -45,7 +46,33 @@ export default function ProductVariant({ index, fieldErrors, variant, setVariant
     "Custom",
   ]
 
-  const handleImages = (e: ChangeEvent<HTMLInputElement>) => {
+  const uploadImage = async (file: File, index: number) => {
+    try {
+      const formData = new FormData()
+      formData.append("image", file)
+      const res = await axios.post("/api/seller/products/upload", formData)
+
+      setVariant(prev => {
+        const images = [...prev.images]
+        images[index] = {
+          ...images[index],
+          url: res.data?.url,
+          uploading: false
+        }
+
+        return {
+          ...prev, images
+        }
+      })
+
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error(error.response?.data)
+      }
+    }
+  }
+
+  const handleImages = async (e: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? [])
 
     if (files.length > 0) {
@@ -59,16 +86,13 @@ export default function ProductVariant({ index, fieldErrors, variant, setVariant
         images: [...variant.images, ...newImages]
       })
 
-      setTimeout(() => {
-        setVariant(prev => ({
-          ...prev,
-          images: prev.images.map(image => ({
-            ...image,
-            uploading: false,
-          }))
+      try {
+        await Promise.all(
+          files.map((file, index) => uploadImage(file, variant.images.length + index))
+        )
+      } catch (error) {
 
-        }))
-      }, 4000);
+      }
 
     }
 
@@ -77,7 +101,7 @@ export default function ProductVariant({ index, fieldErrors, variant, setVariant
     }
   }
 
-  const changeImage = (e: ChangeEvent<HTMLInputElement>, index: number) => {
+  const changeImage = async (e: ChangeEvent<HTMLInputElement>, index: number) => {
     const file = e.target.files?.[0]
     if (!file) return
 
@@ -93,19 +117,7 @@ export default function ProductVariant({ index, fieldErrors, variant, setVariant
       images,
     }))
 
-    setTimeout(() => {
-      setVariant(prev => {
-        const images = [...prev.images]
-        images[index] = {
-          ...images[index],
-          uploading: false
-        }
-
-        return {
-          ...prev, images
-        }
-      })
-    }, 4000);
+    await uploadImage(file, index)
 
     e.target.value = ""
 

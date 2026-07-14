@@ -9,6 +9,8 @@ import ProductVariant from "./ProductVariant";
 import Toggle from "@/components/ui/toggle";
 import ErrorMessage from "@/components/ui/validation/error";
 import RichTextEditor from "@/components/tiptap/RichTextEditor";
+import Details from "./steps/Details";
+import Variants from "./steps/Variants";
 
 export default function AddProduct({ closeModal }: { closeModal: Function }) {
   // const categories: string[] = [
@@ -169,133 +171,35 @@ export default function AddProduct({ closeModal }: { closeModal: Function }) {
   //   "Livestock Supplies",
   // ]
 
-  type Variant = {
-    id: string,
-    images:
-    {
-      url?: string,
-      publicId?: string,
-      uploading: boolean,
-      preview: string,
-    }[],
-    price: number,
-    salePrice: number,
-    sku: string,
-    stock: number,
-    color: string,
-    optionType: string,
-    optionValue: string
+  type ProductData = {
+    name: string,
+    brand: string,
+    category: string,
+    tags: string[],
+    shortDesc: string,
+    description: string,
   }
 
-  type FieldErrors = Record<string, string | string[]> & {
-    variants: Record<string, string | string[]>[]
-  }
+  const [productData, setProductData] = useState<ProductData>({
+    name: "",
+    brand: "",
+    category: "",
+    tags: [],
+    shortDesc: "",
+    description: "",
+  })
 
-  const [categories, setCategories] = useState<string[]>([])
-  const [showCategory, setShowCategory] = useState(false)
-  const [cateorySearch, setCategorySearch] = useState("")
-  const [category, setCategory] = useState("")
-  const [submit, setSubmit] = useState(false)
-  const [error, setError] = useState("")
-  const [fieldErrors, setFieldErrors] = useState<FieldErrors>()
-  const filteredSearch = categories.filter(item => item.toLowerCase().includes(cateorySearch.toLowerCase()))
+  const [complete, setComplete] = useState(false)
+  const [step, setStep] = useState(0)
+  const next = () => setStep(1)
+  const prev = () => setStep(0)
 
-  const [tag, setTag] = useState("")
-  const [tags, setTags] = useState<string[]>([])
-  const [cod, setCod] = useState(true)
-  const [description, setDescription] = useState("")
-  const [data, setData] = useState({})
-  const emptyVariant: Variant = {
-    id: nanoid(),
-    images: [],
-    price: 0,
-    salePrice: 0,
-    sku: "",
-    stock: 0,
-    color: "",
-    optionType: "",
-    optionValue: ""
-  }
-  const [variants, setVariants] = useState<Variant[]>([emptyVariant])
-  const [expandVariant, setExpandVariant] = useState(emptyVariant.id)
+  const steps = [
+    <Details next={next} data={productData} setData={setProductData} />,
+    <Variants prev={prev} complete={setComplete} />
+  ]
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const res = await axios.get("/api/categories")
-      setCategories(res.data)
-    }
-    fetchData()
-
-  }, [])
-
-  const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target
-    setData(prev => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value
-    }))
-  }
-
-  const handleVariantChange = (
-    index: number,
-    updater: Variant | ((prev: Variant) => Variant)) => {
-    setVariants(prev =>
-      prev.map((variant, i) => {
-        if (i !== index) return variant
-        return typeof updater === "function" ? updater(variant) : updater
-      })
-    )
-  }
-
-  const handleShortDesc = (e: SyntheticEvent<HTMLTextAreaElement>) => {
-    const target = e.currentTarget
-    setData(prev => ({
-      ...prev,
-      [target.name]: target.value
-    }))
-    const sibling = target.nextElementSibling
-    if (sibling) sibling.textContent = `${target.value.length}/${target.maxLength}`
-  }
-
-  function selectCategory(value: string) {
-    setCategory(value);
-    setCategorySearch("");
-    setShowCategory(false);
-  }
-
-  function handleTag(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key !== "Enter") return
-
-    e.preventDefault()
-    setTags(prev => [...prev, tag])
-    setTag("")
-  }
-
-  const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setSubmit(true)
-    console.log(data, cod, tags, category);
-    console.log(description)
-    console.log(variants);
-
-    const formData = new FormData()
-    formData.append("data", JSON.stringify({
-      ...data, tags, category, description, cod,
-    }))
-    formData.append("variants", JSON.stringify(variants))
-
-    try {
-      const res = await axios.post("/api/seller/products", formData)
-      if (res.status === 200) {
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        setFieldErrors(error.response?.data?.errors ?? {})
-        setError(error.response?.data?.message ?? "")
-      }
-    }
-    setSubmit(false)
-  }
+  const ProductStep = steps[step]
 
   return (
     <div className="flex flex-col gap-4 h-full">
@@ -309,166 +213,30 @@ export default function AddProduct({ closeModal }: { closeModal: Function }) {
         </button>
       </div>
       <hr className="border border-white/20" />
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4 overflow-y-auto">
-        <div className="flex flex-col border border-white/20 rounded-lg p-5 gap-4 overflow-y-auto">
-
-          <div className="flex flex-col gap-4">
-            <label className="font-bold">Product Information</label>
-
-            <div className="flex flex-col gap-4 md:flex-row md:gap-10">
-              <div className="flex flex-col w-full gap-2">
-                <label className="font-semibold text-sm">Product Name <span className="text-red-500">*</span></label>
-                <input onChange={handleOnChange} className="rounded p-1 px-2 w-full outline-0 border-2 border-white/20 focus:border-white/80 text-sm h-10" placeholder="Enter Product Name" type="text" name="name" required />
-                <ErrorMessage message={fieldErrors?.name} />
-              </div>
-              <div className="flex flex-col w-full gap-2">
-                <label className="font-semibold text-sm">Brand Name</label>
-                <input onChange={handleOnChange} className="rounded p-1 px-2 w-full outline-0 border-2 border-white/20 focus:border-white/80 text-sm h-10" placeholder="Enter Brand Name" type="text" name="brand" />
-                <ErrorMessage message={fieldErrors?.brand} />
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-4 md:flex-row md:gap-10">
-              <div className="flex flex-col w-full">
-                <div className="flex flex-col w-full gap-2">
-                  <label className="font-semibold text-sm">Select Category <span className="text-red-500">*</span></label>
-                  <div className="flex flex-col gap-4">
-                    <input onClick={() => setShowCategory(true)} readOnly className="rounded p-1 px-2 w-full outline-0 border-2 border-white/20 focus:border-white/80 text-sm h-10" value={category} type="text" name="category" placeholder="Select Product Category" />
-                  </div>
-                  <ErrorMessage message={fieldErrors?.category} />
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-2 w-full">
-                <label className="font-semibold text-sm">Tags</label>
-                <input onChange={(e) => setTag(e.target.value)} onKeyDown={handleTag} placeholder="Add a tag (press Enter)" value={tag}
-                  className="rounded px-2 py-1 outline-0 border-2 border-white/20 focus:border-white/80 text-sm h-10" type="text" name="tags" />
-                <div className="flex gap-2 flex-wrap">
-                  {tags.map((item, index) => (
-                    <span className="flex gap-2 text-sm rounded-full pl-3 p-0.5 bg-neutral-700" key={index}>{item}
-                      <button
-                        className="rounded-full bg-neutral-800/20 w-5 h-5 flex items-center justify-center cursor-pointer hover:bg-neutral-800"
-                        onClick={() => setTags(tags.filter((_, i) => i !== index))} type="button">
-                        <Icon icon="mdi:remove" />
-                      </button>
-                    </span>
-                  ))}
-                </div>
-                <ErrorMessage message={fieldErrors?.tags} />
-              </div>
-            </div>
-
-            {showCategory &&
-              <div className="flex flex-col gap-4 bg-neutral-700/50 w-full rounded-md p-5">
-                <div>
-                  <input type="text" autoFocus
-                    value={cateorySearch}
-                    onChange={(e) => setCategorySearch(e.target.value)}
-                    placeholder="Search category..."
-                    className="w-full border rounded text-sm h-10 outline-0 px-3 py-1" />
-                </div>
-
-                <div className="flex flex-col h-52 border border-white/20 rounded p-2 overflow-y-auto">
-                  {filteredSearch.map((item, index) => (
-                    <button key={index}
-                      type="button"
-                      onClick={() => selectCategory(item)}
-                      className="text-left text-sm cursor-pointer rounded my-1 p-1 px-2 hover:bg-blue-500">{item}
-                    </button>
-                  ))
-                  }
-                  {filteredSearch.length === 0 &&
-                    <p className="text-sm font-semibold text-center">No Category Found</p>
-                  }
-                </div>
-              </div>
-            }
-
-
-            <div className="flex flex-col w-full gap-2">
-              <label className="font-semibold text-sm">Short Description</label>
-              <div className="relative">
-                <textarea maxLength={200} onChange={handleShortDesc} rows={6} className="rounded p-1 px-2 w-full outline-0 border-2 border-white/20 focus:border-white/80 text-sm min-h-20 max-h-fit" placeholder="Briefly describe your product..." name="shortDesc" />
-                <p className="absolute bottom-3 right-3 text-xs font-semibold">{"0/200"}</p>
-              </div>
-              <ErrorMessage message={fieldErrors?.shortDesc} />
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <label className="font-bold flex gap-2 items-center">
-              <Icon fontSize={20} className="text-yellow-400" icon="mdi:text" />
-              Description
-            </label>
-            <RichTextEditor value={description} onChange={setDescription} />
-            {fieldErrors?.description && <span className="mt-1 text-xs text-red-500">{fieldErrors?.description}</span>}
-          </div>
-
-          <div className="flex gap-2">
-            <Toggle onChange={setCod} defaultChecked />
-            <span className="text-sm font-semibold">Cash On Delivery</span>
-          </div>
-
-          {/* <div className="prose dark:prose-invert max-w-none" */}
-          {/*   dangerouslySetInnerHTML={{ __html: description }} */}
-          {/* /> */}
-
-
-          <div className="">
-            {variants.map((variant, index) => (
-              <div key={index} className="flex flex-col ">
-                {variants.length > 0 &&
-                  <div className="flex flex-col ">
-                    <div className="flex justify-between w-full gap-4 p-2 my-2 bg-neutral-700/50 rounded">
-                      <button className="flex w-full items-center gap-2 cursor-pointer" onClick={() => setExpandVariant(variant.id)} type="button">
-                        <Icon className={`transition-all duration-75 ${expandVariant === variant.id && "rotate-90"}`} fontSize={20} icon="line-md:chevron-small-right" />
-                        <span className="font-bold text-nowrap">Variant  #{index + 1}</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setVariants(variants.filter((_, i) => i !== index))
-                        }}
-                        className="flex cursor-pointer p-2 px-3 gap-2 text-sm font-semibold items-center rounded bg-red-500" >
-                        <Icon fontSize={16} icon="line-md:trash" />
-                      </button>
-
-                    </div>
-
-                    {expandVariant === variant.id &&
-                      <div className="my-4">
-                        <ProductVariant
-                          index={index}
-                          variant={variant}
-                          fieldErrors={fieldErrors?.variants?.[index]}
-                          setVariant={(v) => handleVariantChange(index, v)} />
-                      </div>
-                    }
-                  </div>
-                }
-              </div>
-            ))}
-          </div>
-
+      <div className="flex justify-center items-center">
+        <div className={`flex justify-center items-center size-10 rounded-full transition-all ${step > 0 ? "bg-green-600" : "bg-neutral-600"} border-2 ${step === 0 ? "border-green-600" : "border-transparent"}`}>
+          <Icon fontSize={20} icon="material-symbols:inventory-2-outline-rounded" />
         </div>
-
-        <div className="flex flex-wrap gap-4 w-full md:justify-end select-none">
-          <button
-            onClick={() => {
-              const newVariant = emptyVariant
-              setVariants(prev => ([...prev, newVariant]))
-              setExpandVariant(newVariant.id)
-            }}
-            className="flex mr-auto text-nowrap gap-1 leading-5 text-xs p-2 px-3 font-semibold bg-green-800 text-green-400 rounded-md cursor-pointer"
-            type="button">
-            <Icon fontSize={20} icon="material-symbols:add-rounded" />
-            Add Variant
-          </button>
-          <button className="text-xs text-nowrap cursor-pointer active:scale-95 duration-200 border bg-white text-black py-2 px-4 font-semibold rounded-md" type="button">Save Draft</button>
-          <button className="text-xs text-nowrap cursor-pointer active:scale-95 duration-200 bg-blue-700  px-4 font-semibold rounded-md" type="submit">Publish</button>
+        <div className={`h-1 bg-neutral-600 flex-[0.2] after:content-[] after:block after:transition-all after:h-1 after:bg-green-600 ${step > 0 ? "after:w-full" : "after:w-0"}`}></div>
+        <div className={`flex justify-center items-center size-10 rounded-full transition-all ${complete && step > 0 ? "bg-green-600" : "bg-neutral-600"} border-2 ${step === 1 ? "border-green-600" : "border-transparent"}`}>
+          <Icon fontSize={20} icon="material-symbols:add-notes-outline-rounded" />
         </div>
-      </form >
+      </div>
+      <div className="flex flex-col border border-white/20 rounded-lg p-5 gap-4 overflow-y-auto">
+        {ProductStep}
+      </div>
+      {step === 0 &&
+        <div className="flex flex-wrap gap-4 w-full md:justify-end select-none h-10">
+          <button onClick={() => closeModal()} className="text-xs text-nowrap cursor-pointer active:scale-95 duration-200 border bg-white text-black py-2 px-4 font-semibold rounded-md" type="button">Cancel</button>
+          <button className="text-xs text-nowrap cursor-pointer active:scale-95 duration-200 bg-blue-700 px-4 font-semibold rounded-md" form="product-details" type="submit">Continue</button>
+        </div>
+      }
+      {step === 1 &&
+        <div className="flex flex-wrap gap-4 w-full md:justify-end select-none h-10">
+          <button onClick={prev} className="text-xs text-nowrap cursor-pointer active:scale-95 duration-200 border bg-white text-black py-2 px-4 font-semibold rounded-md" type="button">Back</button>
+          <button className="text-xs text-nowrap cursor-pointer active:scale-95 duration-200 bg-yellow-400 text-black px-4 font-semibold rounded-md" form="product-variants" type="submit">Publish</button>
+        </div>
+      }
     </div >
   )
 }

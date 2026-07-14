@@ -57,7 +57,7 @@ export default function Setup() {
       data.append("type", name)
 
       try {
-        const res = await axios.post("/api/auth/seller/upload", data)
+        const res = await axios.post("/api/seller/onboarding/upload", data)
         if (res.status === 200) {
           const { url } = res.data
 
