@@ -1,16 +1,12 @@
 "use client"
 
 import axios from "axios";
-import { nanoid } from "nanoid"
 import { Icon } from "@iconify/react"
+import Loading from '@iconify-react/svg-spinners/ring-resize';
 import { useState, useEffect, ChangeEvent, SyntheticEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import ProductVariant from "./ProductVariant";
-import Toggle from "@/components/ui/toggle";
-import ErrorMessage from "@/components/ui/validation/error";
-import RichTextEditor from "@/components/tiptap/RichTextEditor";
-import Details from "./steps/Details";
-import Variants from "./steps/Variants";
+import Product from "./steps/ProductDetails";
+import Variants from "./steps/ProductVariants";
 
 export default function AddProduct({ closeModal }: { closeModal: Function }) {
   // const categories: string[] = [
@@ -172,31 +168,44 @@ export default function AddProduct({ closeModal }: { closeModal: Function }) {
   // ]
 
   type ProductData = {
-    name: string,
+    productName: string,
     brand: string,
-    category: string,
+    category: { name: string, id: string },
     tags: string[],
     shortDesc: string,
     description: string,
+    cod: boolean,
+    slug?: string,
   }
 
   const [productData, setProductData] = useState<ProductData>({
-    name: "",
+    productName: "",
     brand: "",
-    category: "",
+    category: { name: "", id: "" },
     tags: [],
     shortDesc: "",
     description: "",
+    cod: true,
   })
 
+  const [productSubmit, setProductSubmit] = useState(false)
+  const [variantsSubmit, setVariantsSubmit] = useState(false)
   const [complete, setComplete] = useState(false)
   const [step, setStep] = useState(0)
   const next = () => setStep(1)
   const prev = () => setStep(0)
 
   const steps = [
-    <Details next={next} data={productData} setData={setProductData} />,
-    <Variants prev={prev} complete={setComplete} />
+    <Product
+      submit={productSubmit}
+      setSubmit={setProductSubmit}
+      next={next} data={productData}
+      setData={setProductData} />,
+
+    <Variants submit={variantsSubmit}
+      slug={productData?.slug}
+      complete={setComplete}
+      setSubmit={setVariantsSubmit} />
   ]
 
   const ProductStep = steps[step]
@@ -227,14 +236,20 @@ export default function AddProduct({ closeModal }: { closeModal: Function }) {
       </div>
       {step === 0 &&
         <div className="flex flex-wrap gap-4 w-full md:justify-end select-none h-10">
-          <button onClick={() => closeModal()} className="text-xs text-nowrap cursor-pointer active:scale-95 duration-200 border bg-white text-black py-2 px-4 font-semibold rounded-md" type="button">Cancel</button>
-          <button className="text-xs text-nowrap cursor-pointer active:scale-95 duration-200 bg-blue-700 px-4 font-semibold rounded-md" form="product-details" type="submit">Continue</button>
+          <button onClick={() => closeModal()} className="text-xs h-full text-nowrap cursor-pointer active:scale-95 duration-200 border bg-white text-black py-2 px-4 font-semibold rounded-md" type="button">Cancel</button>
+          <button className="flex h-full justify-center items-center w-fit text-xs text-nowrap cursor-pointer active:scale-95 duration-200 bg-blue-700 px-4 font-semibold rounded-md" form="product-details" type="submit">
+            {productSubmit ?
+              <Loading className='h-[50%] w-fit' />
+              :
+              "Continue"
+            }
+          </button>
         </div>
       }
       {step === 1 &&
         <div className="flex flex-wrap gap-4 w-full md:justify-end select-none h-10">
           <button onClick={prev} className="text-xs text-nowrap cursor-pointer active:scale-95 duration-200 border bg-white text-black py-2 px-4 font-semibold rounded-md" type="button">Back</button>
-          <button className="text-xs text-nowrap cursor-pointer active:scale-95 duration-200 bg-yellow-400 text-black px-4 font-semibold rounded-md" form="product-variants" type="submit">Publish</button>
+          <button className="text-xs text-nowrap cursor-pointer active:scale-95 bg-yellow-400 text-black px-4 font-semibold rounded-md" form="product-variants" type="submit">Publish</button>
         </div>
       }
     </div >

@@ -2,12 +2,13 @@ import { auth } from "@/lib/auth";
 import Seller from "@/lib/model/seller.model"
 import { uploadFileOnCloudinary } from "@/lib/cloudinary";
 import connectDB from "@/lib/mongodb";
+import Product from "@/lib/model/product.model";
 
-export async function PATCH(req: Request) {
+export async function POST(req: Request) {
   try {
     const formData = await req.formData()
+    const slug = formData.get("slug") as string
     const image = formData.get("image") as File
-    const type = formData.get("type") as string
 
     if (!(image instanceof File)) {
       return Response.json({
@@ -15,7 +16,7 @@ export async function PATCH(req: Request) {
       }, { status: 400 })
     }
 
-    const MAX_SIZE = 5 * 1024 * 1024; 
+    const MAX_SIZE = 5 * 1024 * 1024;
     const ALLOWED_TYPES = [
       "image/jpeg",
       "image/png",
@@ -52,18 +53,18 @@ export async function PATCH(req: Request) {
       );
     }
 
-    const result = await uploadFileOnCloudinary(buffer, { folder: `sellers/${user?.id}/products`, overwrite: true })
-    const { secure_url, public_id } = result
+    const product = Product.findOne({ slug })
 
-    seller.store[type] = {
-      url: secure_url,
-      publicId: public_id
+    if (!product) {
+      return Response.json({ message: "Product not found!" }, { status: 404 })
     }
 
-    await seller.save()
+    const result = await uploadFileOnCloudinary(buffer, { folder: `sellers/${user?.id}/products/${slug}`, overwrite: true })
+    const { secure_url, public_id } = result
 
     return Response.json({
       url: secure_url,
+      publicId: public_id
     })
   } catch (error: any) {
     return Response.json({

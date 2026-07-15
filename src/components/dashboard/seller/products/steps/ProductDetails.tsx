@@ -10,33 +10,36 @@ import ErrorMessage from "@/components/ui/validation/error";
 import RichTextEditor from "@/components/tiptap/RichTextEditor";
 
 type ProductData = {
-  name: string,
+  productName: string,
   brand: string,
-  category: string,
+  category: { name: string, id: string },
   tags: string[],
   shortDesc: string,
   description: string,
+  cod: boolean,
+  slug?: string,
 }
 
 type Props = {
   next: Function,
   data: ProductData,
+  submit: boolean,
+  setSubmit: (v: boolean) => void,
   setData: Dispatch<SetStateAction<ProductData>>
 }
 
-export default function Details({ next, data, setData }: Props) {
-  const [categories, setCategories] = useState<string[]>([])
+export default function Details({ next, data, setData, submit, setSubmit }: Props) {
+  const [categories, setCategories] = useState<ProductData["category"][]>([])
   const [showCategory, setShowCategory] = useState(false)
   const [cateorySearch, setCategorySearch] = useState("")
-  const [category, setCategory] = useState(data.category)
-  const [submit, setSubmit] = useState(false)
+  const [category, setCategory] = useState<{ name: string, id: string }>(data.category)
   const [error, setError] = useState("")
   const [fieldErrors, setFieldErrors] = useState<Record<string, string | string[]>>()
-  const filteredSearch = categories.filter(item => item.toLowerCase().includes(cateorySearch.toLowerCase()))
+  const filteredSearch = categories.filter(item => item.name.toLowerCase().includes(cateorySearch.toLowerCase()))
 
   const [tag, setTag] = useState("")
   const [tags, setTags] = useState<string[]>(data.tags ?? [])
-  const [cod, setCod] = useState(true)
+  const [cod, setCod] = useState(data.cod)
   const [description, setDescription] = useState(data.description)
 
   useEffect(() => {
@@ -66,7 +69,7 @@ export default function Details({ next, data, setData }: Props) {
     if (sibling) sibling.textContent = `${target.value.length}/${target.maxLength}`
   }
 
-  function selectCategory(value: string) {
+  function selectCategory(value: { name: string, id: string }) {
     setCategory(value);
     setCategorySearch("");
     setShowCategory(false);
@@ -89,11 +92,12 @@ export default function Details({ next, data, setData }: Props) {
     }
 
     setData(formData)
-    next()
 
     try {
-      const res = await axios.post("/api/seller/products", formData)
+      const res = await axios.post("/api/seller/products/details", formData)
       if (res.status === 200) {
+        setData(prev => ({ ...prev, slug: res.data }))
+        next()
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -113,7 +117,7 @@ export default function Details({ next, data, setData }: Props) {
           <div className="flex flex-col gap-4 md:flex-row md:gap-10">
             <div className="flex flex-col w-full gap-2">
               <label className="font-semibold text-sm">Product Name <span className="text-red-500">*</span></label>
-              <input value={data.name} onChange={handleOnChange} className="rounded p-1 px-2 w-full outline-0 border-2 border-white/20 focus:border-white/80 text-sm h-10" placeholder="Enter Product Name" type="text" name="name" required />
+              <input value={data.productName} onChange={handleOnChange} className="rounded p-1 px-2 w-full outline-0 border-2 border-white/20 focus:border-white/80 text-sm h-10" placeholder="Enter Product Name" type="text" name="productName" required />
               <ErrorMessage message={fieldErrors?.name} />
             </div>
             <div className="flex flex-col w-full gap-2">
@@ -138,7 +142,7 @@ export default function Details({ next, data, setData }: Props) {
                   <button key={index}
                     type="button"
                     onClick={() => selectCategory(item)}
-                    className="text-left text-sm cursor-pointer rounded my-1 p-1 px-2 hover:bg-blue-500">{item}
+                    className="text-left text-sm cursor-pointer rounded my-1 p-1 px-2 hover:bg-blue-500">{item.name}
                   </button>
                 ))
                 }
@@ -154,7 +158,7 @@ export default function Details({ next, data, setData }: Props) {
               <div className="flex flex-col w-full gap-2">
                 <label className="font-semibold text-sm">Select Category <span className="text-red-500">*</span></label>
                 <div className="flex flex-col gap-4">
-                  <input value={category} onClick={() => setShowCategory(true)} readOnly className="rounded p-1 px-2 w-full outline-0 border-2 border-white/20 focus:border-white/80 text-sm h-10" type="text" name="category" placeholder="Select Product Category" />
+                  <input value={category.name} onClick={() => setShowCategory(true)} readOnly className="rounded p-1 px-2 w-full outline-0 border-2 border-white/20 focus:border-white/80 text-sm h-10" type="text" name="category" placeholder="Select Product Category" />
                 </div>
                 <ErrorMessage message={fieldErrors?.category} />
               </div>
@@ -162,7 +166,7 @@ export default function Details({ next, data, setData }: Props) {
 
             <div className="flex flex-col gap-2 w-full">
               <label className="font-semibold text-sm">Tags</label>
-              <input onChange={(e) => setTag(e.target.value)} onKeyDown={handleTag} placeholder="Add a tag (press Enter)" value={tag}
+              <input onChange={(e) => setTag(e.target.value)} onKeyDownCapture={handleTag} placeholder="Add a tag (press Enter)" value={tag}
                 className="rounded px-2 py-1 outline-0 border-2 border-white/20 focus:border-white/80 text-sm h-10" type="text" name="tags" />
               <div className="flex gap-2 flex-wrap">
                 {tags.map((item, index) => (

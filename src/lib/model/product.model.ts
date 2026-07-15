@@ -33,25 +33,26 @@ const variantSchema = new Schema({
 
   sku: {
     type: String,
-    required: true,
     unique: true,
+    sparse: true,
+    required: false,
   },
 
   shortDesc: {
     type: String,
-    required: true,
+    // required: true,
   },
 
   description: {
     type: String,
-    required: true,
+    // required: true,
   },
 
   // Pricing
   price: {
     type: Number,
-    required: true,
     min: 0,
+    // required: true,
   },
 
   salePrice: {
@@ -80,23 +81,24 @@ const productSchema = new Schema({
   seller: {
     type: Schema.Types.ObjectId,
     ref: "Seller",
-    required: true,
     index: true,
+    // required: true,
   },
 
   // Information
   name: {
     type: String,
-    required: true,
     trim: true,
+    // required: true,
   },
 
   slug: {
     type: String,
-    required: true,
     unique: true,
+    sparse: true,
     lowercase: true,
     trim: true,
+    required: false,
   },
 
   brand: {

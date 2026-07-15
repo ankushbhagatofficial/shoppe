@@ -17,7 +17,7 @@ export async function GET() {
       .find({ active: true })
       .sort({ name: 1 })
 
-    return Response.json(categories.map(item => item.name))
+    return Response.json(categories.map(item => ({name: item.name, id: item._id})))
 
   } catch (error) {
     return Response.json({
