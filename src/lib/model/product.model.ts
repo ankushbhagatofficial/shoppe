@@ -38,16 +38,6 @@ const variantSchema = new Schema({
     required: false,
   },
 
-  shortDesc: {
-    type: String,
-    // required: true,
-  },
-
-  description: {
-    type: String,
-    // required: true,
-  },
-
   // Pricing
   price: {
     type: Number,
@@ -116,8 +106,14 @@ const productSchema = new Schema({
     }
   ],
 
-  variants: {
-    type: [variantSchema],
+  shortDesc: {
+    type: String,
+    // required: true,
+  },
+
+  description: {
+    type: String,
+    // required: true,
   },
 
   cod: {
@@ -125,10 +121,14 @@ const productSchema = new Schema({
     default: true,
   },
 
+  variants: {
+    type: [variantSchema],
+  },
+
   // Status
   status: {
     type: String,
-    enum: ["draft", "active"],
+    enum: ["draft", "active", "inactive"],
     default: "draft",
   },
 

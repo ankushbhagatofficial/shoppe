@@ -1,6 +1,7 @@
 "use client"
 
 import axios from "axios";
+import { nanoid } from "nanoid"
 import { Icon } from "@iconify/react"
 import Loading from '@iconify-react/svg-spinners/ring-resize';
 import { useState, useEffect, ChangeEvent, SyntheticEvent } from "react";
@@ -8,165 +9,7 @@ import { AnimatePresence, motion } from "motion/react";
 import Product from "./steps/ProductDetails";
 import Variants from "./steps/ProductVariants";
 
-export default function AddProduct({ closeModal }: { closeModal: Function }) {
-  // const categories: string[] = [
-  //   "Custom",
-  //   "Electronics",
-  //   "Mobiles",
-  //   "Laptops",
-  //   "Computers",
-  //   "Computer Accessories",
-  //   "Tablets",
-  //   "Smart Watches",
-  //   "Wearable Devices",
-  //   "Audio",
-  //   "Headphones",
-  //   "Earbuds",
-  //   "Speakers",
-  //   "Cameras",
-  //   "Camera Accessories",
-  //   "Gaming",
-  //   "Gaming Consoles",
-  //   "Gaming Accessories",
-  //   "Networking",
-  //   "Storage Devices",
-  //   "Printers",
-  //   "Office Electronics",
-  //   "TV & Entertainment",
-  //   "Home Appliances",
-  //   "Kitchen Appliances",
-  //   "Large Appliances",
-  //   "Small Appliances",
-  //   "Furniture",
-  //   "Home Decor",
-  //   "Home Improvement",
-  //   "Lighting",
-  //   "Bathroom",
-  //   "Kitchen & Dining",
-  //   "Cookware",
-  //   "Bakeware",
-  //   "Storage & Organization",
-  //   "Cleaning Supplies",
-  //   "Garden",
-  //   "Outdoor Living",
-  //   "Tools & Hardware",
-  //   "Fashion",
-  //   "Men's Clothing",
-  //   "Women's Clothing",
-  //   "Kids' Clothing",
-  //   "Baby Clothing",
-  //   "Footwear",
-  //   "Sports Shoes",
-  //   "Casual Shoes",
-  //   "Bags",
-  //   "Wallets",
-  //   "Luggage",
-  //   "Jewellery",
-  //   "Watches",
-  //   "Sunglasses",
-  //   "Beauty",
-  //   "Skin Care",
-  //   "Hair Care",
-  //   "Makeup",
-  //   "Perfumes",
-  //   "Personal Care",
-  //   "Health Care",
-  //   "Medical Supplies",
-  //   "Nutrition",
-  //   "Vitamins",
-  //   "Sports & Fitness",
-  //   "Gym Equipment",
-  //   "Yoga",
-  //   "Cycling",
-  //   "Running",
-  //   "Camping",
-  //   "Hiking",
-  //   "Cricket",
-  //   "Football",
-  //   "Badminton",
-  //   "Basketball",
-  //   "Swimming",
-  //   "Books",
-  //   "Educational Books",
-  //   "Comics",
-  //   "Magazines",
-  //   "Stationery",
-  //   "Office Supplies",
-  //   "School Supplies",
-  //   "Art & Craft",
-  //   "Toys",
-  //   "Educational Toys",
-  //   "Board Games",
-  //   "Action Figures",
-  //   "Baby Products",
-  //   "Diapers",
-  //   "Baby Care",
-  //   "Pet Supplies",
-  //   "Dog Supplies",
-  //   "Cat Supplies",
-  //   "Aquarium",
-  //   "Bird Supplies",
-  //   "Groceries",
-  //   "Beverages",
-  //   "Snacks",
-  //   "Food Staples",
-  //   "Organic Food",
-  //   "Dairy",
-  //   "Frozen Foods",
-  //   "Automotive",
-  //   "Car Accessories",
-  //   "Motorcycle Accessories",
-  //   "Car Care",
-  //   "Tyres",
-  //   "Industrial",
-  //   "Scientific Supplies",
-  //   "Safety Equipment",
-  //   "Power Tools",
-  //   "Hand Tools",
-  //   "Electrical Supplies",
-  //   "Building Materials",
-  //   "Musical Instruments",
-  //   "Musical Accessories",
-  //   "Movies",
-  //   "Music",
-  //   "Video Games",
-  //   "Collectibles",
-  //   "Antiques",
-  //   "Handmade",
-  //   "Craft Supplies",
-  //   "Party Supplies",
-  //   "Gift Items",
-  //   "Gift Cards",
-  //   "Religious Items",
-  //   "Seasonal Products",
-  //   "Travel Accessories",
-  //   "Smart Home",
-  //   "Security Systems",
-  //   "Solar Products",
-  //   "Eco-Friendly Products",
-  //   "Digital Products",
-  //   "Software",
-  //   "Phone Accessories",
-  //   "Tablet Accessories",
-  //   "Laptop Accessories",
-  //   "Drone & Accessories",
-  //   "3D Printers",
-  //   "Virtual Reality",
-  //   "Augmented Reality",
-  //   "Photography",
-  //   "Fishing",
-  //   "Hunting",
-  //   "Office Furniture",
-  //   "Commercial Equipment",
-  //   "Restaurant Supplies",
-  //   "Salon Supplies",
-  //   "Medical Equipment",
-  //   "Laboratory Equipment",
-  //   "Agriculture",
-  //   "Seeds & Plants",
-  //   "Livestock Supplies",
-  // ]
-
+export default function AddProduct({ id, closeModal, onSuccess }: { id: string, closeModal: Function, onSuccess: Function }) {
   type ProductData = {
     productName: string,
     brand: string,
@@ -178,7 +21,26 @@ export default function AddProduct({ closeModal }: { closeModal: Function }) {
     slug?: string,
   }
 
-  const [productData, setProductData] = useState<ProductData>({
+  type Variant = {
+    id: string,
+    slug?: string,
+    images:
+    {
+      url?: string,
+      publicId?: string,
+      uploading: boolean,
+      preview: string,
+    }[],
+    price: number,
+    salePrice: number,
+    sku: string,
+    stock: number,
+    color: string,
+    optionType: string,
+    optionValue: string
+  }
+
+  const emptyProduct: ProductData = {
     productName: "",
     brand: "",
     category: { name: "", id: "" },
@@ -186,14 +48,45 @@ export default function AddProduct({ closeModal }: { closeModal: Function }) {
     shortDesc: "",
     description: "",
     cod: true,
-  })
+  }
 
+  const emptyVariant: Variant = {
+    id: nanoid(),
+    images: [],
+    price: 0,
+    salePrice: 0,
+    sku: "",
+    stock: 0,
+    color: "",
+    optionType: "",
+    optionValue: ""
+  }
+
+  const [productData, setProductData] = useState(emptyProduct)
+  const [productVariants, setProuctVariants] = useState<Variant[]>([emptyVariant])
   const [productSubmit, setProductSubmit] = useState(false)
   const [variantsSubmit, setVariantsSubmit] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [complete, setComplete] = useState(false)
   const [step, setStep] = useState(0)
   const next = () => setStep(1)
   const prev = () => setStep(0)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true)
+      const res = await axios.get("/api/seller/products/" + id)
+      setProductData(res.data.product)
+      if (res.data.variants.length > 0) {
+        setProuctVariants(prev => ({
+          ...prev, ...res.data.variants
+        }))
+
+      }
+      setLoading(false)
+    }
+    if (id) fetchData()
+  }, [])
 
   const steps = [
     <Product
@@ -203,19 +96,37 @@ export default function AddProduct({ closeModal }: { closeModal: Function }) {
       setData={setProductData} />,
 
     <Variants submit={variantsSubmit}
-      slug={productData?.slug}
+      slug={productData?.slug ?? ""}
+      variants={productVariants}
+      setVariants={setProuctVariants}
+      emptyVariant={emptyVariant}
       complete={setComplete}
+      onSuccess={onSuccess}
+      closeModal={closeModal}
       setSubmit={setVariantsSubmit} />
   ]
 
   const ProductStep = steps[step]
 
+  if (loading) return (
+    <div className="h-full">
+      <button onClick={() => closeModal()} className='float-right cursor-pointer opacity-50' type='button'>
+        <Icon fontSize={25} icon="mdi:remove" />
+      </button>
+      <div className="flex justify-center items-center h-full">
+        <Loading className='size-10' />
+      </div>
+    </div>
+  )
+
   return (
     <div className="flex flex-col gap-4 h-full">
       <div className="flex justify-between items-center">
         <div className="flex flex-col w-full">
-          <h1 className="font-bold text-lg">Add New Product</h1>
-          <p className="font-semibold text-xs w-[80%]">Fill in the details below to add new product to your store.</p>
+          <h1 className="font-bold text-lg">{id ? "Update" : "Add New"} Product</h1>
+          {!id &&
+            <p className="font-semibold text-xs w-[80%]">Fill in the details below to add new product to your store.</p>
+          }
         </div>
         <button onClick={() => closeModal()} className='cursor-pointer opacity-50' type='button'>
           <Icon fontSize={25} icon="mdi:remove" />

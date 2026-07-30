@@ -28,7 +28,6 @@ export default function UpdateCategory({ category, onClose, onSuccess }: { categ
     e.preventDefault()
     setSubmit(true)
     onSuccess(false)
-    console.log(name, slug, active);
 
     try {
       const res = await axios.patch("/api/admin/categories/" + category?._id, { category: name, slug, active })

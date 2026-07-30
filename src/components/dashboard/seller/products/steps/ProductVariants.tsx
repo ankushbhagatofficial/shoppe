@@ -1,7 +1,6 @@
 "use client"
 
 import axios from "axios";
-import { nanoid } from "nanoid"
 import { Icon } from "@iconify/react"
 import Loading from '@iconify-react/svg-spinners/ring-resize';
 import { useState, useEffect, ChangeEvent, SyntheticEvent, SetStateAction, Dispatch } from "react";
@@ -10,7 +9,6 @@ import ErrorMessage from "@/components/ui/validation/error";
 
 type Variant = {
   id: string,
-  slug?: string,
   images:
   {
     url?: string,
@@ -32,20 +30,26 @@ type FieldErrors = Record<string, string | string[]> & {
 }
 
 type ProductVariantsProps = {
-  slug?: string,
+  slug: string,
+  variants: Variant[],
+  setVariants: Dispatch<SetStateAction<Variant[]>>,
+  emptyVariant: Variant,
   submit: boolean,
+  onSuccess: Function,
+  closeModal: Function,
   setSubmit: (v: boolean) => void,
   complete: (v: boolean) => void
 }
 
 type VariantProps = {
   index: number,
+  slug: string,
   variant: Variant,
   setVariant: Dispatch<SetStateAction<Variant>>,
   fieldErrors: Record<string, string | string[]> | undefined,
 }
 
-function ProductVariant({ index, fieldErrors, variant, setVariant }: VariantProps) {
+function Variant({ index, slug, fieldErrors, variant, setVariant }: VariantProps) {
   const [imageError, setImageError] = useState("")
   const [expandImages, setExpandImages] = useState(index === 0)
   const OPTION_TYPES = [
@@ -64,7 +68,7 @@ function ProductVariant({ index, fieldErrors, variant, setVariant }: VariantProp
     try {
       const formData = new FormData()
       formData.append("image", file)
-      formData.append("slug", variant?.slug as string)
+      formData.append("slug", slug)
       const res = await axios.post("/api/seller/products/upload", formData)
 
       setVariant(prev => {
@@ -326,23 +330,10 @@ function ProductVariant({ index, fieldErrors, variant, setVariant }: VariantProp
   )
 }
 
-export default function Variants({ complete, submit, setSubmit, slug }: ProductVariantsProps) {
-  const emptyVariant: Variant = {
-    id: nanoid(),
-    slug,
-    images: [],
-    price: 0,
-    salePrice: 0,
-    sku: "",
-    stock: 0,
-    color: "",
-    optionType: "",
-    optionValue: ""
-  }
-
+export default function ProductVariants({ slug, onSuccess, closeModal, variants, setVariants, emptyVariant, complete, submit, setSubmit }: ProductVariantsProps) {
+  const [error, setError] = useState("")
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>()
-  const [variants, setVariants] = useState<Variant[]>([emptyVariant])
-  const [expandVariant, setExpandVariant] = useState(emptyVariant.id)
+  const [expandVariant, setExpandVariant] = useState(variants[variants.length - 1].id)
 
   const handleVariantChange = (
     index: number,
@@ -355,10 +346,25 @@ export default function Variants({ complete, submit, setSubmit, slug }: ProductV
     )
   }
 
-  const handleSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault()
     complete(true)
     setSubmit(true)
+    onSuccess(false)
+
+    try {
+      const res = await axios.patch("/api/seller/products/variants", { ...variants, slug })
+      if (res.status === 200) {
+        onSuccess(true)
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        setFieldErrors(error.response?.data?.errors ?? {})
+        setError(error.response?.data?.message ?? "")
+      }
+    }
+    setSubmit(false)
+    closeModal()
 
   }
 
@@ -378,7 +384,8 @@ export default function Variants({ complete, submit, setSubmit, slug }: ProductV
                   <button
                     type="button"
                     onClick={() => {
-                      setVariants(variants.filter((_, i) => i !== index))
+                      if (variants.length > 1)
+                        setVariants(variants.filter((_, i) => i !== index))
                     }}
                     className="flex cursor-pointer p-2 px-3 gap-2 text-sm font-semibold items-center rounded bg-red-500" >
                     <Icon fontSize={16} icon="line-md:trash" />
@@ -388,7 +395,8 @@ export default function Variants({ complete, submit, setSubmit, slug }: ProductV
 
                 {expandVariant === variant.id &&
                   <div className="my-4">
-                    <ProductVariant
+                    <Variant
+                      slug={slug}
                       index={index}
                       variant={variant}
                       fieldErrors={fieldErrors?.variants?.[index]}
